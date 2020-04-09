@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8bd7b1f8-e9f4-4b27-af49-b60165c8cc80" name="Default Changelist" comment="" />
+    <list default="true" id="8bd7b1f8-e9f4-4b27-af49-b60165c8cc80" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/KailuaCarRental.iml" beforeDir="false" afterPath="$PROJECT_DIR$/KailuaCarRental.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KailuaCarRental/Controller/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KailuaCarRental/Controller/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KailuaCarRental/Main/App.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KailuaCarRental/Main/App.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/Car.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/Car.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/DBConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/DBConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/Database.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/KailuaCarRental/Model/Database.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,7 +32,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../mysql-connector-java-5.1.48" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
@@ -62,9 +71,38 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="275" y="23" key="#Project_Structure" timestamp="1585928412896">
-      <screen x="0" y="0" width="1366" height="728" />
+    <state x="387" y="33" key="#Project_Structure" timestamp="1586441497342">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="275" y="23" key="#Project_Structure/0.0.1366.728@0.0.1366.728" timestamp="1585928412896" />
+    <state x="387" y="33" key="#Project_Structure/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441497342" />
+    <state x="625" y="6" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog" timestamp="1586441495221">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="625" y="6" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441495221" />
+    <state x="549" y="80" key="DetectedRootsChooserDialog" timestamp="1586441491989">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="549" y="80" key="DetectedRootsChooserDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441491989" />
+    <state x="575" y="129" key="FileChooserDialogImpl" timestamp="1586441490450">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="575" y="129" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441490450" />
+    <state width="1877" height="261" key="GridCell.Tab.0.bottom" timestamp="1586441502836">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="261" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441502836" />
+    <state width="1877" height="261" key="GridCell.Tab.0.center" timestamp="1586441502836">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="261" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441502836" />
+    <state width="1877" height="261" key="GridCell.Tab.0.left" timestamp="1586441502836">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="261" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441502836" />
+    <state width="1877" height="261" key="GridCell.Tab.0.right" timestamp="1586441502836">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="261" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586441502836" />
   </component>
 </project>
