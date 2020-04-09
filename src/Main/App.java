@@ -2,9 +2,18 @@ package Main;
 
 import Controller.Controller;
 import UI.Login;
+import UI.MainMenu;
 
 public class App {
+
+	private static Controller controller;
+
 	public static void main(String[] args) {
-		System.out.println("run");
+		controller = new Controller();
+		new MainMenu();
+	}
+
+	public static Controller getController() {
+		return controller;
 	}
 }

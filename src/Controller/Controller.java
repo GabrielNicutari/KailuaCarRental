@@ -5,7 +5,14 @@ import Model.Database;
 import File_Management.FileManagement;
 
 public class Controller {
-	public Validation _unnamed_Validation_;
-	public Database _unnamed_Database_;
-	public FileManagement _unnamed_FileManagement_;
+
+	//Instantiate Objects
+	private static Database database;
+	private static FileManagement fm;
+	private static Validation validation;
+
+	//Constructors
+	public Controller() {
+		database = new Database();
+	}
 }
