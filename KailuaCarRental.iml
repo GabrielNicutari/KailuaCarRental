@@ -7,27 +7,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../mysql-connector-java-5.1.48" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../mysql-connector-java-5.1.48/src" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/../../mysql-connector-java-5.1.48" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../mysql-connector-java-5.1.48" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../../mysql-connector-java-5.1.48" recursive="false" />
-      </library>
-    </orderEntry>
   </component>
 </module>
