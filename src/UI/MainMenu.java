@@ -17,6 +17,7 @@ public class MainMenu {
 	//Methods
 	private static void displayMainMenuAdmin(){
 		System.out.println("\t\t\t -MENU- \t\t\t");
+		System.out.println("Choose an option:");
 		System.out.println("1. Manage customers menu");
 		System.out.println("2. Manage cars menu");
 		System.out.println("3. Manage contracts menu");

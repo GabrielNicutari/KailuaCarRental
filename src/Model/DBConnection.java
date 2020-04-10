@@ -12,20 +12,28 @@ public class DBConnection {
 	//Instantiate Objects
 	private static Connection con;
 
-	static {
+	//Constructors
+	public DBConnection() {
 		try {
 			con = DriverManager.getConnection(URL,USER,PASSWORD);
-			Statement statement = con.createStatement();
-			String query = "SELECT * FROM customers";
-			ResultSet rs = statement.executeQuery(query);
-
-			while(rs.next()) {
-				System.out.println(rs.getString("first_name"));
-			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	//Methods
+	public void displayCars(String table) {
+		try {
+			Statement statement = con.createStatement();
+			String query = "SELECT * FROM " + table;
+			ResultSet rs = statement.executeQuery(query);
+
+			while(rs.next()) {
+				System.out.print(rs.getString("plate")+ " ");
+				System.out.println(rs.getString("hp"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
