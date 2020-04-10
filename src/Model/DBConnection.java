@@ -25,7 +25,7 @@ public class DBConnection {
 			e.printStackTrace();
 		}
 		customerManagement = new CustomerManagement();
-		carManagement = new CarManagement();
+		carManagement = new CarManagement(con);
 		rentalContractsManagement = new RentalContractsManagement();
 	}
 
@@ -48,6 +48,9 @@ public class DBConnection {
 		}
 	}
 	public static Boolean searchCar(String columnName) {
-		return CarManagement.searchCar(columnName, con);
+		return CarManagement.searchCar(columnName);
+	}
+	public static void deleteRow(String tableName) {
+		CarManagement.deleteRow(tableName);
 	}
 }

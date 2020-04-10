@@ -132,7 +132,8 @@ public class CarMenu {
 					break;
 
 				case "2":
-					//repeat = App.getController().deleteCar();
+					//repeat =
+					App.getController().deleteCar();
 					updated = true;
 					MainMenu.printEmptyLines();
 					break;

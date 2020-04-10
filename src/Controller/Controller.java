@@ -26,4 +26,7 @@ public class Controller {
 	public Boolean searchCar(String columnName) {
 		return dbC.searchCar(columnName);
 	}
+	public void deleteCar() {
+		dbC.deleteRow("cars");
+	}
 }

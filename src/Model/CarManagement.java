@@ -3,20 +3,21 @@ package Model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class CarManagement {
-
+    public static Connection con;
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-    public static Boolean searchCar (String columnName, Connection con) {
+    public CarManagement (Connection con) {
+        this.con = con;
+    }
+
+    public static Boolean searchCar (String columnName) {
 
        if (columnName.equals("brand.name")) {
-           displayBrand(con);
-           choosenBrand(con);
+           displayBrand();
+           choosenBrand();
        }
         if (columnName.equals("cars.hp")) {
         }
@@ -24,10 +25,10 @@ public class CarManagement {
         }
         if (columnName.equals("cars.price_per_day")) {
         }
-        return false;
+        return true;
     }
 
-        public static void displayBrand(Connection con) {
+        public static void displayBrand() {
             try {
                 Statement statement = con.createStatement();
                 String query = "SELECT id, name " +
@@ -45,7 +46,7 @@ public class CarManagement {
                 e.printStackTrace();
             }
         }
-        public static void choosenBrand(Connection con) {
+        public static void choosenBrand() {
             try {
                 Statement statement = con.createStatement();
                 String userInput = null;
@@ -56,7 +57,7 @@ public class CarManagement {
                 }
                 String query = "SELECT * " +
                         "FROM brands, cars " +
-                        "WHERE brands.id = " + userInput;
+                        "WHERE brands.id = " + userInput  + " AND cars.brand_id = " + userInput;
                 ResultSet rs = statement.executeQuery(query);
 
                 while(rs.next()) {
@@ -70,9 +71,22 @@ public class CarManagement {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+        public static void deleteRow(String tableName) {
 
+            try {
+                String userInput = null;
+                try {
+                    userInput = br.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                PreparedStatement st = con.prepareStatement("DELETE FROM " + tableName + " WHERE id = " + userInput);
+                st.executeUpdate();
 
-
-
+                System.out.println("Its been succesfully deleted.! Congratz conrad!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 }
