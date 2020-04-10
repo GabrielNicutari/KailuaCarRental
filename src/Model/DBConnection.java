@@ -30,18 +30,18 @@ public class DBConnection {
 	}
 
 	//Methods
-	public void displayCars(String table) {
+	public void displayCars(String table) {			//cars
 		try {
 			Statement statement = con.createStatement();
-			String query = "SELECT brands.id, cars.id " +
-					"FROM cars, brands " +
+			String query = "SELECT * FROM cars, brands " +
 					"WHERE brands.id = cars.brand_id";
 			ResultSet rs = statement.executeQuery(query);
+
+			//read from carFields.txt
 
 			while(rs.next()) {
 				System.out.print(rs.getString("cars.id") + " ");
 				System.out.println(rs.getString("brands.id"));
-
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
