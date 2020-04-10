@@ -1,24 +1,23 @@
 package Controller;
 
+import Model.DBConnection;
 import UI.Validation;
-import Model.Database;
 import File_Management.FileManagement;
 
 public class Controller {
 
 	//Instantiate Objects
-	private static Database database;
+	private DBConnection dbC;
 	private static FileManagement fm;
 	private static Validation validation;
 
 	//Constructors
 	public Controller() {
-		database = new Database();
+		dbC = new DBConnection();
 	}
 
-
 	public void displayCars(String table) {
-		database.displayCars(table);
+		dbC.displayCars(table);
 	}
 
 	public void createCar() {
