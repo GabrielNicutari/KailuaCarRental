@@ -57,14 +57,14 @@ public class MainMenu {
 					break;
 
 				default:
-					MainMenu.printEmptyLines();
+					printEmptyLines();
 					System.out.println("Choice must be a value between \"1\" and \"4\".");
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					MainMenu.printEmptyLines();
+					printEmptyLines();
 			}
 		} while (!choice.equals("4"));
 	}

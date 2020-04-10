@@ -55,7 +55,7 @@ public class CarMenu {
 			switch (choice) {
 				case "1":
 					MainMenu.printEmptyLines();
-					App.getController().displayCars("cars");
+					App.getController().displayCars();
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
