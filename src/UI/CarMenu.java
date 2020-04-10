@@ -101,9 +101,11 @@ public class CarMenu {
 
 
 			if(repeat)  {
-				String column = chooseFilter();	//this is the chosen filter
-				//display the column (with options <[?]>)
-				//found = App.getController().searchCar();
+				String column = chooseFilter();//this is the chosen filter
+				found = App.getController().searchCar(column);//if we allow the user to type
+				//otherwise, we display whatever's inside the column and make him choose
+
+				//it's tricky tho, we can do that for brand name, but it's harder for seats
 			}
 
 			if(!found) {
@@ -128,7 +130,8 @@ public class CarMenu {
 					break;
 
 				case "2":
-					//repeat = App.getController().deleteCar();
+					//repeat =
+					App.getController().deleteCar();
 					updated = true;
 					MainMenu.printEmptyLines();
 					break;

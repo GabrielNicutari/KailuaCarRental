@@ -24,6 +24,9 @@ public class DBConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		customerManagement = new CustomerManagement();
+		carManagement = new CarManagement(con);
+		rentalContractsManagement = new RentalContractsManagement();
 	}
 
 	//Methods
@@ -35,8 +38,14 @@ public class DBConnection {
 		customerManagement.display(con);
 	}
 
+	public static Boolean searchCar(String columnName) {
+		return CarManagement.searchCar(columnName);
+	}
+	public static void deleteRow(String tableName) {
+		CarManagement.deleteRow(tableName);
+	}
+
 	public void displayContracts() {
 		rentalContractsManagement.display(con);
 	}
-
 }
