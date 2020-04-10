@@ -38,7 +38,7 @@ public class CarMenu {
 		System.out.println("[1] Car Brand");
 		System.out.println("[2] HP Range");
 		System.out.println("[3] Number of seats");
-		System.out.println("[4] Price per day");
+		System.out.println("[4] Price per day Range");
 		System.out.println("[5] Back to Car Menu");
 	}
 
@@ -102,11 +102,7 @@ public class CarMenu {
 
 			if(repeat)  {
 				String column = chooseFilter();	//this is the chosen filter
-				System.out.println("Type the <" + column + "> of the Car.");       //if we allow the user to type
-				//otherwise, we display whatever's inside the column and make him choose
-
-				//it's tricky tho, we can do that for brand name, but it's harder for seats
-
+				//display the column (with options <[?]>)
 				//found = App.getController().searchCar();
 			}
 
