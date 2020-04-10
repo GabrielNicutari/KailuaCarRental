@@ -38,7 +38,7 @@ public class CarMenu {
 		System.out.println("[1] Car Brand");
 		System.out.println("[2] HP Range");
 		System.out.println("[3] Number of seats");
-		System.out.println("[4] Price per day");
+		System.out.println("[4] Price per day Range");
 		System.out.println("[5] Back to Car Menu");
 	}
 
@@ -55,7 +55,7 @@ public class CarMenu {
 			switch (choice) {
 				case "1":
 					MainMenu.printEmptyLines();
-					App.getController().displayCars("cars");
+					App.getController().displayCars();
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
@@ -106,8 +106,6 @@ public class CarMenu {
 				//otherwise, we display whatever's inside the column and make him choose
 
 				//it's tricky tho, we can do that for brand name, but it's harder for seats
-
-				//found = App.getController().searchCar();
 			}
 
 			if(!found) {

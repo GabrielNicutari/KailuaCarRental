@@ -16,8 +16,16 @@ public class Controller {
 		dbC = new DBConnection();
 	}
 
-	public void displayCars(String table) {
-		dbC.displayCars(table);
+	public void displayCars() {
+		dbC.displayCars();
+	}
+
+	public void displayCustomers() {
+		dbC.displayCustomers();
+	}
+
+	public void displayContracts() {
+		dbC.displayContracts();
 	}
 
 	public void createCar() {
