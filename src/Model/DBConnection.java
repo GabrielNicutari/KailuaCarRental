@@ -10,9 +10,9 @@ public class DBConnection {
 	private static final String URL = "jdbc:mysql://den1.mysql2.gear.host:3306/kailuacarrental?autorecconect=true&useSSL=false";
 	private static final String USER = "kailuacarrental";
 	private static final String PASSWORD = "Orangeplant!";
-	private CustomerManagement customerManagement;
-	private CarManagement carManagement;
-	private RentalContractsManagement rentalContractsManagement;
+	private CustomerManagement customerManagement = new CustomerManagement();
+	private CarManagement carManagement = new CarManagement();
+	private RentalContractsManagement rentalContractsManagement = new RentalContractsManagement();
 
 	//Instantiate Objects
 	private static Connection con;
@@ -24,29 +24,19 @@ public class DBConnection {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		customerManagement = new CustomerManagement();
-		carManagement = new CarManagement();
-		rentalContractsManagement = new RentalContractsManagement();
 	}
 
 	//Methods
-	public void displayCars(String table) {			//cars
-		try {
-			Statement statement = con.createStatement();
-			String query = "SELECT * FROM cars, brands " +
-					"WHERE brands.id = cars.brand_id";
-			ResultSet rs = statement.executeQuery(query);
-
-			//read from carFields.txt
-
-			while(rs.next()) {
-				System.out.print(rs.getString("cars.id") + " ");
-				System.out.println(rs.getString("brands.id"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void displayCars() {
+		carManagement.display(con);
 	}
 
+	public void displayCustomers() {
+		customerManagement.display(con);
+	}
+
+	public void displayContracts() {
+		rentalContractsManagement.display(con);
+	}
 
 }
