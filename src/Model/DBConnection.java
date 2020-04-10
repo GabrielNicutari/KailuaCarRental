@@ -47,6 +47,7 @@ public class DBConnection {
 			e.printStackTrace();
 		}
 	}
-
-
+	public static Boolean searchCar(String columnName) {
+		return CarManagement.searchCar(columnName, con);
+	}
 }

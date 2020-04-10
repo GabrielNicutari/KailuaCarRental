@@ -23,4 +23,7 @@ public class Controller {
 	public void createCar() {
 		//uff
 	}
+	public Boolean searchCar(String columnName) {
+		return dbC.searchCar(columnName);
+	}
 }

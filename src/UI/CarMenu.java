@@ -101,8 +101,8 @@ public class CarMenu {
 
 
 			if(repeat)  {
-				String column = chooseFilter();	//this is the chosen filter
-				System.out.println("Type the <" + column + "> of the Car.");       //if we allow the user to type
+				String column = chooseFilter();//this is the chosen filter
+				found = App.getController().searchCar(column);//if we allow the user to type
 				//otherwise, we display whatever's inside the column and make him choose
 
 				//it's tricky tho, we can do that for brand name, but it's harder for seats
