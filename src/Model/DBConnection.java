@@ -1,51 +1,62 @@
 package Model;
 
-import UI.RentalContractsMenu;
+import UI.Validation;
 
 import java.sql.*;
 
 public class DBConnection {
 
-	//Fields
+	//  Fields
 	private static final String URL = "jdbc:mysql://den1.mysql2.gear.host:3306/kailuacarrental?autorecconect=true&useSSL=false";
 	private static final String USER = "kailuacarrental";
 	private static final String PASSWORD = "Orangeplant!";
-	private CustomerManagement customerManagement = new CustomerManagement();
-	private CarManagement carManagement = new CarManagement();
-	private RentalContractsManagement rentalContractsManagement = new RentalContractsManagement();
 
-	//Instantiate Objects
+	//  Instantiate Objects
+    private CustomerManagement customerManagement;
+    private CarManagement carManagement;
+    private RentalContractManagement rentalContractManagement;
 	private static Connection con;
+	private static Validation validation;
 
-	//Constructors
+	//  Constructors
 	public DBConnection() {
 		try {
 			con = DriverManager.getConnection(URL,USER,PASSWORD);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		customerManagement = new CustomerManagement();
-		carManagement = new CarManagement(con);
-		rentalContractsManagement = new RentalContractsManagement();
+		validation = new Validation(con);
+		customerManagement = new CustomerManagement(con);
+		carManagement = new CarManagement(con,validation);
+		rentalContractManagement = new RentalContractManagement(con);
 	}
 
-	//Methods
+	//  Methods
+    //		---DISPLAY---		\\
 	public void displayCars() {
-		carManagement.display(con);
+		carManagement.display();
 	}
 
 	public void displayCustomers() {
-		customerManagement.display(con);
+		customerManagement.display();
 	}
 
-	public static Boolean searchCar(String columnName) {
-		return CarManagement.searchCar(columnName);
-	}
-	public static void deleteRow(String tableName) {
-		CarManagement.deleteRow(tableName);
-	}
+    public void displayRentalContracts() {
+        rentalContractManagement.display();
+    }
 
-	public void displayContracts() {
-		rentalContractsManagement.display(con);
-	}
+    //		---SEARCH---		\\
+    public void searchCar(String columnName) {
+        carManagement.searchCar(columnName);
+    }
+
+    //		---UPDATE---		\\
+    public void updateCar() {
+	    //not yet
+    }
+
+    //		---DELETE---		\\
+    public void deleteRow(String tableName) {
+        CarManagement.deleteRow(tableName);
+    }
 }

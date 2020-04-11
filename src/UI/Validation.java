@@ -1,12 +1,31 @@
 package UI;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Validation {
+
+    //  Instantiate Objects
+    private static Connection con;
+
+    //  Console Input
     private static Scanner scanner = new Scanner(System.in);
+
+    //  Constructors
+    public Validation(Connection con) {
+        this.con = con;
+    }
+
+    public Validation() {
+        this(con);
+    }
 
     private boolean validateInt(String number) {
         Pattern pattern =  Pattern.compile("\\d+");
@@ -55,7 +74,9 @@ public class Validation {
         if(this.validateInt(number)) {
             return Integer.parseInt(number);
         }
-        return getValidatedInt("Invalid input. Cannot contain any characters other than figures");
+        System.out.println();
+        System.out.println("Invalid input. Cannot contain any characters other than figures");
+        return getValidatedInt(message);
     }
 
     public double getValidatedDouble(String message) {
@@ -169,5 +190,28 @@ public class Validation {
         if(input.equalsIgnoreCase("N") || input.equalsIgnoreCase("NO"))   {
             System.exit(0);
         }
+    }
+
+    public int isInsideTable(String tableName) {
+        int input = -1;
+
+        input = getValidatedInt("Choose an option: (Type the ID)");
+
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * FROM " + tableName + " WHERE id = " + input;
+            ResultSet rs = statement.executeQuery(query);
+
+            if(rs.next()) { //checks if rs is empty, if it is, it means it found nothing in the table matching the input
+                return input;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println();
+        System.out.println("Invalid input. You can only choose between the listed IDs.");
+        return isInsideTable(tableName);
     }
 }

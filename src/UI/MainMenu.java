@@ -6,22 +6,22 @@ import java.io.InputStreamReader;
 
 public class MainMenu {
 	
-	//Console Inputs
+	//	Console Input
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
-	//Constructors
+	//	Constructor
 	public MainMenu() {
 		mainMenuAdmin();
 	}
 
-	//Methods
+	//	Methods
 	private static void displayMainMenuAdmin(){
 		System.out.println("\t\t\t -MENU- \t\t\t");
 		System.out.println("Choose an option:");
-		System.out.println("1. Manage customers menu");
-		System.out.println("2. Manage cars menu");
-		System.out.println("3. Manage contracts menu");
-		System.out.println("4. Exit");
+		System.out.println("[1] Manage Customers Menu");
+		System.out.println("[2] Manage Cars Menu");
+		System.out.println("[3] Manage Rental Contracts Menu");
+		System.out.println("[4] Exit");
 	}
 
 	public static void mainMenuAdmin(){
@@ -37,7 +37,7 @@ public class MainMenu {
 			switch (choice) {
 				case "1":
 					printEmptyLines();
-					//CustomerMenu.display();
+					CustomerMenu.display();
 					printEmptyLines();
 					break;
 
@@ -49,7 +49,7 @@ public class MainMenu {
 
 				case "3":
 					printEmptyLines();
-					//RentalContractsMenu.display();
+					RentalContractMenu.display();
 					printEmptyLines();
 					break;
 

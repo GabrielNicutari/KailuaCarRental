@@ -1,12 +1,27 @@
 package Model;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class RentalContractsManagement {
-    public void display(Connection con) {
+public class RentalContractManagement {
+
+    //  Instantiate Objects
+    public static Connection con;
+
+    //  Console Input
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    //  Constructor
+    public RentalContractManagement(Connection con) {
+        this.con = con;
+    }
+
+    //  Methods
+    public void display() {
         try {
             Statement statement = con.createStatement();
 

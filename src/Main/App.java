@@ -10,7 +10,6 @@ public class App {
 	public static void main(String[] args) {
 
 		controller = new Controller();
-		controller.displayContracts();
 		new MainMenu();
 	}
 

@@ -6,8 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class CarMenu {
-
+public class RentalContractMenu {
 	//  Console Inputs
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -15,32 +14,28 @@ public class CarMenu {
 	private static Validation validation = new Validation();
 
 	//  Constructors
-	public CarMenu() {}
+	public RentalContractMenu() {}
 
 	//	Menu Options
 	public static void displayOptions(){
-		System.out.println("\t\t\t -MANAGE CARS MENU- \t\t\t");
+		System.out.println("\t\t\t -MANAGE RENTAL CONTRACTS MENU- \t\t\t");
 		System.out.println("Choose an option:");
-		System.out.println("[1] Display Cars");
-		System.out.println("[2] Add Car");
-		System.out.println("[3] Search for a Car");
+		System.out.println("[1] Display Rental Contracts");
+		System.out.println("[2] Create Rental Contract");
+		System.out.println("[3] Search for Rental Contracts");
 		System.out.println("[4] Back to Main Menu");
 	}
 
 	public static void displaySearchOptions(){
 		System.out.println("Do you wish to perform further operations such as: ");
-		System.out.println("[1] Update Car information");
-		System.out.println("[2] Remove Car");
-		System.out.println("[3] Back to Car Menu");
+		System.out.println("[1] Update Rental Contract information");
+		System.out.println("[2] Remove Rental Contract");
+		System.out.println("[3] Back to Rental Contract Menu");
 	}
 
-	public static void displaySearchFilters() {
+	public static void displaySearchFilters() {			//we'll see
 		System.out.println("Choose a filter:");
-		System.out.println("[1] Car Brand");
-		System.out.println("[2] HP Range");
-		System.out.println("[3] Number of seats");
-		System.out.println("[4] Price per day Range");
-		System.out.println("[5] Back to Car Menu");
+
 	}
 
 	//  UI Methods
@@ -57,21 +52,21 @@ public class CarMenu {
 			switch (choice) {
 				case "1":
 					MainMenu.printEmptyLines();
-					App.getController().displayCars();
+					App.getController().displayRentalContracts();
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
 
 				case "2":
 					MainMenu.printEmptyLines();
-					App.getController().createCar();
+					App.getController().createRentalContract();
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
 
 				case "3":
 					MainMenu.printEmptyLines();
-					searchCar();
+					searchRentalContract();
 					MainMenu.printEmptyLines();
 					break;
 
@@ -91,18 +86,18 @@ public class CarMenu {
 		} while (!choice.equals("4"));
 	}
 
-	public static void searchCar(){
+	public static void searchRentalContract(){
 		String choice = "-1";
 		boolean updated = false;
 		boolean doesContinue = false;
 
 		do {
-			System.out.println("SEARCH CAR MENU");
+			System.out.println("SEARCH RENTAL CONTRACT MENU");
 			System.out.println("****************************");
 
 			String column = chooseFilter();	//this is the chosen filter
 			if(!column.equals("BACK")) {
-				App.getController().searchCar(column);
+				//App.getController().searchRentalContract(column);
 				doesContinue = true;
 			}
 
@@ -122,12 +117,12 @@ public class CarMenu {
 			switch (choice) {
 				case "1":
 					updated = true;
-					updateCarMenu();
+					updateRentalContractMenu();
 					MainMenu.printEmptyLines();
 					break;
 
 				case "2":
-					App.getController().deleteCar();
+					App.getController().deleteRentalContract();
 					updated = true;
 					MainMenu.printEmptyLines();
 					break;
@@ -148,7 +143,7 @@ public class CarMenu {
 		} while (!choice.equals("3") && !updated);
 	}
 
-	public static String chooseFilter() {
+	public static String chooseFilter() {	//Dunno if we'll use it or not at all
 		String choice = "-1";
 
 		displaySearchFilters();
@@ -187,9 +182,9 @@ public class CarMenu {
 		}
 	}
 
-	public static void updateCarMenu(){
+	public static void updateRentalContractMenu(){
 
-		int toUpdate = validation.getValidatedInt("Type the <ID> of the Car you want to modify");
+		int toUpdate = validation.getValidatedInt("Type the <ID> of the RentalContract you want to modify");
 
 		String choice = "-1";
 		do {
@@ -209,21 +204,21 @@ public class CarMenu {
 				case "1":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"employeeId");
+					//App.getController().updateRentalContract(toUpdate,"employeeId");
 					MainMenu.printEmptyLines();
 					break;
 
 				case "2":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"shiftIds");
+					//App.getController().updateRentalContract(toUpdate,"shiftIds");
 					MainMenu.printEmptyLines();
 					break;
 
 				case "3":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"everything");
+					//App.getController().updateRentalContract(toUpdate,"everything");
 					MainMenu.printEmptyLines();
 					break;
 
