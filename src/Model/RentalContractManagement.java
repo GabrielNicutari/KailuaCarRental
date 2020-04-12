@@ -1,5 +1,7 @@
 package Model;
 
+import UI.Validation;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -11,13 +13,17 @@ public class RentalContractManagement {
 
     //  Instantiate Objects
     public static Connection con;
+    private static Validation validation;
+    public CustomerManagement customerManagement = new CustomerManagement(con);
+    public CarManagement carManagement = new CarManagement(con, validation);
 
     //  Console Input
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //  Constructor
-    public RentalContractManagement(Connection con) {
+    public RentalContractManagement(Connection con, Validation validation) {
         this.con = con;
+        this.validation = validation;
     }
 
     //  Methods
@@ -51,5 +57,58 @@ public class RentalContractManagement {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static java.sql.Date convertUtilToSql(java.util.Date date) {
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
+    }
+
+    public void create() {//create the customer as well and the connection in contract_list table
+        System.out.println("In order to create a new CONTRACT first type: ");
+        String answer = validation.yesOrNo("\"yes/y\" or \"no/n\" if the customer already exists: ");
+
+        int customerID, carID;
+        if (answer.equals("yes")) {
+            System.out.println("In this case, please type the customer's ID from the following: ");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            customerManagement.display();
+
+            System.out.println("\n CUSTOMER ID: ");
+            customerID = validation.isInsideTable("customers");
+
+        } else {
+            System.out.println("In this case, please type the following: ");
+
+            System.out.println("Select the desired car's ID: ");
+            carManagement.display();
+
+            System.out.println("\n CAR ID: ");
+            carID = validation.isInsideTable("cars");
+
+            java.sql.Date fromDate = convertUtilToSql(validation.getValidatedDate("Please type the rental start date (yyyy-MM-dd): "));
+
+            java.sql.Date toDate = convertUtilToSql(validation.getValidatedDate("Please type the rental end date (yyyy-MM-dd): "));
+
+            String reply = validation.yesOrNo("You have 150 km per day. Would you like to add some extra km for the entire rent period?");
+
+            int extraKm = 0;
+            if (reply.equals("yes")) {
+                System.out.println();
+                extraKm = validation.getValidatedInt("Type the extra km: ");
+            }
+            //total price
+
+
+
+        }
+
+
+
     }
 }

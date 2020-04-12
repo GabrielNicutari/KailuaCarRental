@@ -1,5 +1,6 @@
 package Model;
 
+import UI.CarMenu;
 import UI.MainMenu;
 import UI.Validation;
 
@@ -7,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
+import java.util.Scanner;
 
 public class CarManagement {
 
@@ -14,8 +16,6 @@ public class CarManagement {
     private static Connection con;
     private static Validation validation;
 
-    //  Console Input
-    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //  Constructor
     public CarManagement (Connection con, Validation validation) {
@@ -47,6 +47,79 @@ public class CarManagement {
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
                         rs.getString("c.registration_date"));
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static java.sql.Date convertUtilToSql(java.util.Date date) {
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
+    }
+
+    public void create () {
+
+        System.out.println("In order to create a new CAR please enter the following:");
+        System.out.printf("|%-5s| |%-15s| |%-15s|\n", "ID", "BRAND NAME", "MODEL");
+        System.out.println("*********************************************");
+
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM brands b";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            while(rs.next()) {
+                System.out.printf("|%-5s| |%-15s| |%-15s|\n", rs.getString("b.id"), rs.getString("b.name"), rs.getString("b.model"));
+            }
+            System.out.println();
+            System.out.println("Please type the car's ID you want to add!");
+
+            int id = validation.isInsideTable("brands");
+
+            double engineCap = validation.getValidatedDouble("Please type the engine capacity in litres: ");
+
+            int horsePower = validation.getValidatedInt("Please type the output of the engine (in horsepower): ");
+
+            String automaticGear = validation.yesOrNo("Please type \"yes/y\" or \"no/n\" for automatic gear: ");
+
+            String fuelType = validation.getValidatedName("Please enter the fuel type: ");
+
+            int odometer = validation.getValidatedInt("Please type existing number of kilometers (odometer): ");
+
+            String plate = validation.getValidatedPlate("Please type the registration number (eg: AB12345):");
+
+            java.sql.Date registrationDate = convertUtilToSql(validation.getValidatedDate("Please type the first registration date (yyyy-MM-dd): "));
+
+            int numberSeats = validation.getValidatedInt("Please type the number of seats: ");
+
+            String cruiseControl = validation.yesOrNo("Please type \"yes/y\" or \" no/n\" for cruise control: ");
+
+            String seatsMaterial = validation.getValidatedName("Please type the seats material: ");
+
+            double priceDay = validation.getValidatedDouble("Please type the price per day of the car: ");
+
+            query = "INSERT INTO cars " +
+                    "VALUES (DEFAULT, " + id +", " + engineCap + ", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
+                    ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
+                    seatsMaterial + "\", " + priceDay + ")";
+
+
+            boolean ok = false;
+            do {
+                String answer = validation.getValidatedAnswer("Are you sure you want to add the car to the database? (Type \"Y/YES\" or \"N/NO\")");
+                if (answer.equalsIgnoreCase("no") || answer.equalsIgnoreCase("n")) {
+                    System.out.println("The data has NOT been saved!");
+                    ok = true;
+                } else  if (answer.equalsIgnoreCase("yes") || answer.equalsIgnoreCase("y")) {
+                    System.out.println("The data has been saved!");
+                    ok = true;
+                    statement.executeUpdate(query);
+                }
+            } while (!ok);
 
         } catch (SQLException e) {
             e.printStackTrace();

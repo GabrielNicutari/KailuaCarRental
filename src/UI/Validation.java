@@ -5,10 +5,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
 
 public class Validation {
 
@@ -75,8 +80,7 @@ public class Validation {
             return Integer.parseInt(number);
         }
         System.out.println();
-        System.out.println("Invalid input. Cannot contain any characters other than figures");
-        return getValidatedInt(message);
+        return getValidatedInt("Invalid input. Cannot contain any characters other than digits: ");
     }
 
     public double getValidatedDouble(String message) {
@@ -85,7 +89,7 @@ public class Validation {
         if (this.validateDouble(number)) {
             return Double.parseDouble(number);
         }
-        return getValidatedDouble("Invalid input. Salary cannot contains any characters other than figures.");
+        return getValidatedDouble("Invalid input. It cannot contain any characters other than decimal numbers. (eg: 2.5)");
     }
 
     public ArrayList<Integer> getValidatedIds (String message) {
@@ -169,7 +173,20 @@ public class Validation {
         if(!isNotYesOrNO(answer)) {
             return answer;
         }
-        return getValidatedAnswer("Wrong input. Type \\\"Y/YES\\\" or \\\"N/NO\\\"\"");
+        return getValidatedAnswer("Wrong input. Type \"Y/YES\" or \"N/NO\"");
+    }
+
+    public String yesOrNo(String message) {
+        System.out.println(message);
+        String answer = scanner.nextLine();
+        if (answer.equalsIgnoreCase("yes") || answer.equalsIgnoreCase("y")) {
+            return "yes";
+        } else if (answer.equalsIgnoreCase("no") || answer.equalsIgnoreCase("n")) {
+            return "no";
+        } else {
+            System.out.println();
+            return yesOrNo("Invalid answer. Try \"yes/y\" or \"no/n\"!");
+        }
     }
 
     public boolean isNotYesOrNO(String input) {
@@ -190,6 +207,38 @@ public class Validation {
         if(input.equalsIgnoreCase("N") || input.equalsIgnoreCase("NO"))   {
             System.exit(0);
         }
+    }
+
+    public Date getValidatedDate (String message) {
+        System.out.println(message);
+        String datePattern = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})";
+        String answer = scanner.nextLine();
+        boolean match = Pattern.matches(datePattern, answer);
+
+        if (match) {
+            java.util.Date date;
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(answer);
+                return date;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return getValidatedDate("Wrong input. Please try again! (yyyy-MM-dd)");// why?
+            }
+        } else {
+            return getValidatedDate("Wrong input. Please try again! (yyyy-MM-dd)");
+        }
+
+    }
+
+    public String getValidatedPlate(String message) {
+        System.out.println(message);
+        Pattern pattern = Pattern.compile("[A-Z]{2}[0-9]{5}"); //SD12345
+        String answer = scanner.nextLine();
+        Matcher matcher = pattern.matcher(answer);
+        if (matcher.matches()) {
+            return answer;
+        }
+        return getValidatedPlate("Wrong input. Please try again! (eg: AB12345)");
     }
 
     public int isInsideTable(String tableName) {
