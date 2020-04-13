@@ -71,7 +71,7 @@ public class CarMenu {
 
 				case "3":
 					MainMenu.printEmptyLines();
-					searchCar();
+					//searchCar();
 					MainMenu.printEmptyLines();
 					break;
 

@@ -102,24 +102,20 @@ public class CarManagement {
 
             double priceDay = validation.getValidatedDouble("Please type the price per day of the car: ");
 
-            query = "INSERT INTO cars " +
-                    "VALUES (DEFAULT, " + id +", " + engineCap + ", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
-                    ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
-                    seatsMaterial + "\", " + priceDay + ")";
+            String answer = validation.yesOrNo("Are you sure you want to add the car into the database? (Type \"Y/YES\" or \"N/NO\")");
 
+            if (answer.equals("no")) {
+                System.out.println("The data has NOT been saved!");
 
-            boolean ok = false;
-            do {
-                String answer = validation.getValidatedAnswer("Are you sure you want to add the car to the database? (Type \"Y/YES\" or \"N/NO\")");
-                if (answer.equalsIgnoreCase("no") || answer.equalsIgnoreCase("n")) {
-                    System.out.println("The data has NOT been saved!");
-                    ok = true;
-                } else  if (answer.equalsIgnoreCase("yes") || answer.equalsIgnoreCase("y")) {
-                    System.out.println("The data has been saved!");
-                    ok = true;
-                    statement.executeUpdate(query);
-                }
-            } while (!ok);
+            } else {
+                query = "INSERT INTO cars " +
+                        "VALUES (DEFAULT, " + id +", " + engineCap + ", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
+                        ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
+                        seatsMaterial + "\", " + priceDay + ")";
+
+                System.out.println("The data has been saved!");
+                statement.executeUpdate(query);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

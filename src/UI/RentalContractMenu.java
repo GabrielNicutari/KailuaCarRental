@@ -66,7 +66,7 @@ public class RentalContractMenu {
 
 				case "3":
 					MainMenu.printEmptyLines();
-					searchRentalContract();
+					//searchRentalContract();
 					MainMenu.printEmptyLines();
 					break;
 

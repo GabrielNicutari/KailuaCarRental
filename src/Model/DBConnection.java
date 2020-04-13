@@ -26,7 +26,7 @@ public class DBConnection {
 			e.printStackTrace();
 		}
 		validation = new Validation(con);
-		customerManagement = new CustomerManagement(con);
+		customerManagement = new CustomerManagement(con, validation);
 		carManagement = new CarManagement(con, validation);
 		rentalContractManagement = new RentalContractManagement(con, validation);
 	}

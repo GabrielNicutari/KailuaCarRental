@@ -153,7 +153,7 @@ public class Validation {
         if(this.validatePhoneNumber(phoneNumber)){
             return phoneNumber;
         }
-        System.out.println("Invalid phone number. Should have 8 digits. Try again");
+        System.out.println("Invalid phone number. Please try again! (eg: 12345678)");
         return getValidatedPhone(message);
     }
 
@@ -239,6 +239,16 @@ public class Validation {
             return answer;
         }
         return getValidatedPlate("Wrong input. Please try again! (eg: AB12345)");
+    }
+
+    public String getValidatedZip(String message) {
+        Pattern pattern = Pattern.compile("[0-9]{4}"); //2300
+        String answer = scanner.nextLine();
+        Matcher matcher = pattern.matcher(answer);
+        if (matcher.matches()) {
+            return answer;
+        }
+        return getValidatedZip("Wrong input. Please try again! (eg: 2300)");
     }
 
     public int isInsideTable(String tableName) {
