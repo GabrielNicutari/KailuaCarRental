@@ -5,7 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -183,13 +186,45 @@ public class Validation {
 
         String input = scanner.next();
         while(isNotYesOrNO(input)) {     //Input Validation
-            System.out.println("Wrong input. Type Type \"Y/YES\" or \"N/NO\"");
+            System.out.println("Wrong input. Type \"Y/YES\" or \"N/NO\"");
             input = scanner.next();
         }
 
         if(input.equalsIgnoreCase("N") || input.equalsIgnoreCase("NO"))   {
             System.exit(0);
         }
+    }
+
+    public Date getValidatedDate (String message) {
+        System.out.println(message);
+        String datePattern = "([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})";
+        String answer = scanner.nextLine();
+        boolean match = Pattern.matches(datePattern, answer);
+
+        if (match) {
+            java.util.Date date;
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(answer);
+                return date;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return getValidatedDate("Wrong input. Please try again! (yyyy-MM-dd)");// why?
+            }
+        } else {
+            return getValidatedDate("Wrong input. Please try again! (yyyy-MM-dd)");
+        }
+
+    }
+
+    public String getValidatedPlate(String message) {
+        System.out.println(message);
+        Pattern pattern = Pattern.compile("[A-Z]{2}[0-9]{5}"); //SD12345
+        String answer = scanner.nextLine();
+        Matcher matcher = pattern.matcher(answer);
+        if (matcher.matches()) {
+            return answer;
+        }
+        return getValidatedPlate("Wrong input. Please try again! (eg: AB12345)");
     }
 
     public int isInsideTable(String tableName) {
