@@ -1,6 +1,8 @@
 package UI;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +23,8 @@ public class Validation {
     private static Connection con;
 
     //  Console Input
-    private static Scanner scanner = new Scanner(System.in);
+    Scanner scanner = new Scanner(System.in);
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //  Constructors
     public Validation(Connection con) {
@@ -109,7 +112,12 @@ public class Validation {
 
     public String getValidatedName(String message){
         System.out.println(message);
-        String name = scanner.nextLine();
+        String name = "";
+        try {
+            name = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if(this.validateName(name)){
             return name;
         }
@@ -243,7 +251,13 @@ public class Validation {
 
     public String getValidatedZip(String message) {
         Pattern pattern = Pattern.compile("[0-9]{4}"); //2300
-        String answer = scanner.nextLine();
+        System.out.println(message);
+        String answer = null;
+        try {
+            answer = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Matcher matcher = pattern.matcher(answer);
         if (matcher.matches()) {
             return answer;

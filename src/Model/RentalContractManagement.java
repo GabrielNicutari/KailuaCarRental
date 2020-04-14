@@ -4,6 +4,7 @@ import UI.Validation;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,16 +15,18 @@ public class RentalContractManagement {
     //  Instantiate Objects
     private static Connection con;
     private static Validation validation;
-    private CustomerManagement customerManagement = new CustomerManagement(con, validation);
-    private CarManagement carManagement = new CarManagement(con, validation);
+    private static CarManagement carManagement;
+    private static CustomerManagement customerManagement;
 
     //  Console Input
     //private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //  Constructor
-    public RentalContractManagement(Connection con, Validation validation) {
+    public RentalContractManagement(Connection con, Validation validation, CarManagement carManagement, CustomerManagement customerManagement) {
         this.con = con;
         this.validation = validation;
+        this.carManagement = carManagement;
+        this.customerManagement = customerManagement;
     }
 
     //  Methods
@@ -90,12 +93,14 @@ public class RentalContractManagement {
 
             try {
                 Statement statement = con.createStatement();
-                String query = "SELECT MAX(id) " +
+                String query = "SELECT id " +
                         "FROM customers";
 
                 ResultSet rs = statement.executeQuery(query);
 
-                customerID = rs.getInt("customers.id");
+                while (rs.next()) {
+                    customerID = Integer.parseInt(rs.getString("id"));
+                }
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -116,7 +121,8 @@ public class RentalContractManagement {
         java.util.Date endDate = validation.getValidatedDate("Please type the rental end date (yyyy-MM-dd): ");
         java.sql.Date toDate = convertUtilToSql(endDate);
 
-        String reply = validation.yesOrNo("You have 150 km per day. Would you like to add some EXTRA KM for the entire rent period?");
+        String reply = validation.yesOrNo("You have 150 km per day. Would you like to add some EXTRA KM for the entire rent period?" +
+                "(Type \"Y/YES\" or \"N/NO\")");
 
         int extraKm = 0;//The customer can add an extra amount of km
         if (reply.equals("yes")) {
@@ -125,7 +131,7 @@ public class RentalContractManagement {
         }
 
         //Calculate total price
-        double totalPrice = 0;
+        BigDecimal totalPrice = new BigDecimal(0.0);
         try {
             Statement statement = con.createStatement();
 
@@ -134,10 +140,16 @@ public class RentalContractManagement {
                     "WHERE cars.id = " + carID;
 
             ResultSet rs = statement.executeQuery(query);
+            double priceDay = 0;
+            while(rs.next()) {
+                priceDay = rs.getDouble("price_per_day");
+            }
 
-            double priceDay = rs.getDouble("cars.id");
-
-            totalPrice = priceDay * (endDate.getTime() - startDate.getTime() + extraKm / 150);
+            System.out.println("price/day: " + priceDay);
+            int days = (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+            System.out.println("days:" + days);
+            double val = priceDay * (days + (double) (extraKm) / 150);
+            totalPrice = totalPrice.valueOf(val).setScale(2, BigDecimal.ROUND_HALF_UP);
             System.out.println("TOTAL PRICE: " + totalPrice);
 
         } catch (SQLException e) {
@@ -172,7 +184,11 @@ public class RentalContractManagement {
                         "FROM contracts";
 
                 ResultSet rs = statement.executeQuery(query);
-                contractID = rs.getInt("contracts.id");
+                while (rs.next()) {
+                    contractID = rs.getInt(1);
+                }
+
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }

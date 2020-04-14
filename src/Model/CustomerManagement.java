@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 public class CustomerManagement {
 
@@ -21,6 +22,7 @@ public class CustomerManagement {
 
     //  Console Input
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    Scanner scanner = new Scanner(System.in);
 
     //  Constructor
     public CustomerManagement(Connection con, Validation validation) {
@@ -56,15 +58,21 @@ public class CustomerManagement {
         }
     }
 
+
+    private static java.sql.Date convertUtilToSql(java.util.Date date) {
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        return sqlDate;
+    }
+
     public void create() {
         System.out.println();
         String firstName = validation.getValidatedName("First Name: ");
 
         String lastName = validation.getValidatedName("Last Name");
 
-        String address = "";
+        String address = null;
+        System.out.println("Address: ");
         try {
-            System.out.println("Address: ");
             address = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,7 +86,7 @@ public class CustomerManagement {
 
         String email = validation.getValidatedEmail("Email Address: ");
 
-        String licenceNr = "";
+        String licenceNr = null;
         try {
             System.out.println("Licence Number: ");
             licenceNr = br.readLine();
@@ -96,22 +104,23 @@ public class CustomerManagement {
 
             ArrayList<String> licenceNrList = new ArrayList<>();
             while (rs.next()) {
-                    licenceNrList.add(rs.getString("customers.driver_licence_number"));
+                    licenceNrList.add(rs.getString("driver_licence_number"));
             }
+            System.out.println(licenceNrList);
 
             if (licenceNrList.contains(licenceNr)) {
                 System.out.println("You already exist in our database: ");
 
                 try {
                     query = "SELECT * " +
-                            "FROM customers c" +
+                            "FROM customers c " +
                             "WHERE driver_licence_number = \"" + licenceNr + "\"";
 
                     rs = statement.executeQuery(query);
 
                     System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n", "ID",
                             "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "DRIVER LICENCE NR", "DRIVER SINCE", "EMAIL");
-                    System.out.println("*****************************************************************************************************************" +
+                    System.out.println("***************************************************************************************************************" +
                             "**********************************************************");
                     while (rs.next()) {
                         System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n",
@@ -120,11 +129,65 @@ public class CustomerManagement {
                                 rs.getString("c.driver_licence_number"), rs.getString("c.driver_since_date"),
                                 rs.getString("c.email"));
                     }
-
+                    System.out.println();
                     App.getController().createRentalContract();//it sends the customer back to rental contract menu
 
                 } catch (SQLException e) {
                     e.printStackTrace();
+                }
+            } else {
+
+                java.sql.Date driverSince = convertUtilToSql(validation.getValidatedDate("Driver Since Date: "));
+
+                //  --VALIDATE CUSTOMER--
+                String answer = validation.yesOrNo("\nIs the information correct? Type \"yes/y\" or \"no/n\": ");
+                if (answer.equals("yes")) {
+
+                    //get customer id
+                    int customerID = 0;
+                    try {
+                        Statement statement1 = con.createStatement();
+                        String query1 = "SELECT MAX(id) " +
+                                "FROM customers";
+
+                        ResultSet rs1 = statement1.executeQuery(query1);
+                        while(rs1.next()) {
+                            customerID = Integer.parseInt(rs.getString(1)) + 1;
+                        }
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    //save zip and city in zip table
+                    try {
+                        Statement statement2 = con.createStatement();
+                        String query2 = "INSERT INTO zip " +
+                                "VALUES (\"" + zip + "\", \"" + city + "\")";
+
+                        statement2.executeUpdate(query2);
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Save the customer information in the db
+                    try {
+                        Statement statement3 = con.createStatement();
+                        String query3 = "INSERT INTO customers " +
+                                "VALUES (" + customerID + ", \"" + firstName + "\", \"" + lastName + "\", \"" + address + "\", \"" + zip + "\", \"" + phoneNr
+                                + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\")";
+
+                        statement3.executeUpdate(query3);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    //Save the zip and city in zip table
+
+                    System.out.println("The customer information has been saved!");
+                } else {
+                    System.out.println("The customer information has NOT been saved!");
                 }
             }
 
@@ -132,29 +195,6 @@ public class CustomerManagement {
             e.printStackTrace();
         }
 
-        Date driverSince = validation.getValidatedDate("Driver Since Date: ");
-
-
-        //  --VALIDATE CUSTOMER--
-        String asnwer = validation.yesOrNo("\nIs the information correct? Type \"yes/y\" or \"no/n\": ");
-        if (asnwer.equals("yes")) {
-            String query1 = "INSERT INTO customers " +
-                    "VALUES (MAX(id) + 1, \"" + firstName + "\", \"" + lastName + "\"" + address + "\", \"" + zip + "\", \"" + phoneNr
-                    + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\")";
-
-            String query2 = "INSERT INTO zip " +
-                    "VALUES (\"" + zip + "\", \"" + city + "\")";
-
-            try {
-                Statement statement = con.createStatement();
-                statement.executeUpdate(query1);
-                statement.executeUpdate(query2);
-                System.out.println("The customer information has been saved!");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 

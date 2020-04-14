@@ -28,7 +28,7 @@ public class DBConnection {
 		validation = new Validation(con);
 		customerManagement = new CustomerManagement(con, validation);
 		carManagement = new CarManagement(con, validation);
-		rentalContractManagement = new RentalContractManagement(con, validation);
+		rentalContractManagement = new RentalContractManagement(con, validation, carManagement, customerManagement);
 	}
 
 
