@@ -29,8 +29,8 @@ public class Controller {
 		dbC.searchCar(columnName);
 	}
 
-	public void updateCar() {
-		dbC.updateCar();
+	public void updateCar(int toUpdate, String columnName) {
+		dbC.updateCar(toUpdate, columnName);
 	}
 
 	public void deleteCar() {

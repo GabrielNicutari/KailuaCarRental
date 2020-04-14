@@ -208,7 +208,7 @@ public class Validation {
 
         String input = scanner.next();
         while(isNotYesOrNO(input)) {     //Input Validation
-            System.out.println("Wrong input. Type Type \"Y/YES\" or \"N/NO\"");
+            System.out.println("Wrong input. Type \"Y/YES\" or \"N/NO\"");
             input = scanner.next();
         }
 
@@ -264,7 +264,6 @@ public class Validation {
         }
         return getValidatedZip("Wrong input. Please try again! (eg: 2300)");
     }
-
     public int isInsideTable(String tableName) {
         int input = -1;
 

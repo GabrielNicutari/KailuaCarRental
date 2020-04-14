@@ -64,8 +64,8 @@ public class DBConnection {
 
 
     //		---UPDATE---		\\
-    public void updateCar() {
-	    //not yet
+    public void updateCar(int toUpdate, String columnName) {
+	    carManagement.update(toUpdate, columnName);
     }
 
 
