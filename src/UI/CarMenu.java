@@ -43,6 +43,16 @@ public class CarMenu {
 		System.out.println("[5] Back to Car Menu");
 	}
 
+	public static void displayUpdateOptions() {
+		System.out.println("Choose what to modify: ");
+		System.out.println("[1] Cruise control ");
+		System.out.println("[2] Plate");
+		System.out.println("[3] Price per Day");
+		System.out.println("[4] Seats material");
+		System.out.println("[5] Everything");
+		System.out.println("[6] Go back");
+	}
+
 	//  UI Methods
 	public static void display() {
 		String choice = "-1";
@@ -121,8 +131,8 @@ public class CarMenu {
 
 			switch (choice) {
 				case "1":
-					updated = true;
 					updateCarMenu();
+					updated = true;
 					MainMenu.printEmptyLines();
 					break;
 
@@ -146,6 +156,74 @@ public class CarMenu {
 					}
 			}
 		} while (!choice.equals("3") && !updated);
+	}
+
+	public static void updateCarMenu(){
+		boolean updated = false;
+		String choice = "-1";
+		int toUpdate = validation.isInsideTable("cars");
+		do {
+			System.out.println();
+			displayUpdateOptions();
+
+			try {
+				choice = br.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			switch(choice) {
+				case "1":
+
+					MainMenu.printEmptyLines();
+					App.getController().updateCar(toUpdate, "cruise_control");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "2":
+
+					MainMenu.printEmptyLines();
+					App.getController().updateCar(toUpdate, "plate");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "3":
+
+					MainMenu.printEmptyLines();
+					App.getController().updateCar(toUpdate, "price_per_day");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "4":
+					MainMenu.printEmptyLines();
+					App.getController().updateCar(toUpdate, "seats_material");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "5":
+					MainMenu.printEmptyLines();
+					App.getController().updateCar(toUpdate, "everything");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "6":
+					break;
+
+				default:
+					MainMenu.printEmptyLines();
+					System.out.println("Choice must be a value between \"1\" and \"6\".");
+					MainMenu.printEmptyLines();
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+			}
+		}  while(!choice.equals("6") && !updated);
 	}
 
 	public static String chooseFilter() {
@@ -185,61 +263,5 @@ public class CarMenu {
 				MainMenu.printEmptyLines();
 				return chooseFilter();
 		}
-	}
-
-	public static void updateCarMenu(){
-
-		int toUpdate = validation.getValidatedInt("Type the <ID> of the Car you want to modify");
-
-		String choice = "-1";
-		do {
-			System.out.println();
-			System.out.println("Choose what to modify: ");		//holy shit, a lot of things
-			System.out.println("[1] Employee ID ");
-			System.out.println("[2] Shift IDs");
-			System.out.println("[3] Everything");
-			System.out.println("[4] Go back");
-
-			try {
-				choice = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			switch(choice) {
-				case "1":
-
-					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"employeeId");
-					MainMenu.printEmptyLines();
-					break;
-
-				case "2":
-
-					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"shiftIds");
-					MainMenu.printEmptyLines();
-					break;
-
-				case "3":
-
-					MainMenu.printEmptyLines();
-					//App.getController().updateCar(toUpdate,"everything");
-					MainMenu.printEmptyLines();
-					break;
-
-				case "4":
-					break;
-
-				default:
-					MainMenu.printEmptyLines();
-					System.out.println("Choice must be a value between \"1\" and \"4\".");
-					MainMenu.printEmptyLines();
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-			}
-		}  while(!choice.equals("4"));
 	}
 }
