@@ -15,14 +15,14 @@ public class Controller {
 		dbC = new DBConnection();
 	}
 
-	//	Methods
+
 	//		---CARS---		\\
 	public void displayCars() {
 		dbC.displayCars();
 	}
 
 	public void createCar() {
-		//uff
+		dbC.createCar();
 	}
 
 	public void searchCar(String columnName) {
@@ -37,14 +37,13 @@ public class Controller {
 		dbC.deleteRow("cars");
 	}
 
+
+
 	//		---CUSTOMERS---		\\
 	public void displayCustomers() {
 		dbC.displayCustomers();
 	}
 
-	public void createCustomer() {
-
-	}
 
 	public void searchCustomer() {
 
@@ -57,14 +56,15 @@ public class Controller {
 	public void deleteCustomer() {
 
 	}
-	
+
+
 	//		---RENTAL CONTRACTS---		\\
 	public void displayRentalContracts() {
 		dbC.displayRentalContracts();
 	}
 
 	public void createRentalContract() {
-
+		dbC.createRentalContract();
 	}
 
 	public void searchRentalContract() {

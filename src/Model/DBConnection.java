@@ -26,10 +26,11 @@ public class DBConnection {
 			e.printStackTrace();
 		}
 		validation = new Validation(con);
-		customerManagement = new CustomerManagement(con);
-		carManagement = new CarManagement(con,validation);
-		rentalContractManagement = new RentalContractManagement(con);
+		customerManagement = new CustomerManagement(con, validation);
+		carManagement = new CarManagement(con, validation);
+		rentalContractManagement = new RentalContractManagement(con, validation, carManagement, customerManagement);
 	}
+
 
 	//  Methods
     //		---DISPLAY---		\\
@@ -45,18 +46,33 @@ public class DBConnection {
         rentalContractManagement.display();
     }
 
+
+	// 		---CREATE---		\\
+    public void createCar() {
+		carManagement.create();
+	}
+
+	public void createRentalContract() {
+		rentalContractManagement.create();
+	}
+
+
     //		---SEARCH---		\\
     public void searchCar(String columnName) {
         carManagement.searchCar(columnName);
     }
+
 
     //		---UPDATE---		\\
     public void updateCar(int toUpdate, String columnName) {
 	    carManagement.update(toUpdate, columnName);
     }
 
+
     //		---DELETE---		\\
     public void deleteRow(String tableName) {
         CarManagement.deleteRow(tableName);
     }
+
+
 }

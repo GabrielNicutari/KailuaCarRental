@@ -59,7 +59,7 @@ public class CustomerMenu {
 
 				case "2":
 					MainMenu.printEmptyLines();
-					App.getController().createCustomer();
+					//App.getController().createCustomer();
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
