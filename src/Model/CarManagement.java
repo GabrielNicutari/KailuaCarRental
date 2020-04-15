@@ -3,6 +3,7 @@ package Model;
 import UI.CarMenu;
 import UI.MainMenu;
 import UI.Validation;
+import com.mysql.jdbc.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,8 +33,9 @@ public class CarManagement {
             Statement statement = con.createStatement();
 
             String query = "SELECT * " +
-                    "FROM cars c, brands b " +
-                    "WHERE b.id = c.brand_id";
+                    "FROM cars c, brands b , models m " +
+                    "WHERE b.id = m.brand_id and m.id = c.model_id " +
+                    "ORDER BY c.id";
 
             ResultSet rs = statement.executeQuery(query);
 
@@ -44,7 +46,7 @@ public class CarManagement {
                     "*************************************************************************************************************");
             while(rs.next()) {
                 System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n",
-                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("b.model"), rs.getString("c.litre_engine"),
+                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("m.name"), rs.getString("c.litre_engine"),
                         rs.getString("c.hp"), rs.getString("c.fuel_type"), rs.getString("c.odometer"),
                         rs.getString("c.automatic_gear"), rs.getString("c.price_per_day"), rs.getString("c.number_seats"),
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
@@ -62,12 +64,12 @@ public class CarManagement {
     }
 
     public void create () {
-
-        System.out.println("In order to create a new CAR please enter the following:");
-        System.out.printf("|%-5s| |%-15s| |%-15s|\n", "ID", "BRAND NAME", "MODEL");
-        System.out.println("*********************************************");
-
+        //display all the brands from the db
         try {
+            System.out.println("In order to create a new CAR please enter the following:");
+            System.out.printf("|%-5s| %-15s|\n", "ID", "BRAND");
+            System.out.println("*************************");
+
             Statement statement = con.createStatement();
 
             String query = "SELECT * " +
@@ -76,53 +78,118 @@ public class CarManagement {
             ResultSet rs = statement.executeQuery(query);
 
             while(rs.next()) {
-                System.out.printf("|%-5s| |%-15s| |%-15s|\n", rs.getString("b.id"), rs.getString("b.name"), rs.getString("b.model"));
-            }
-            System.out.println();
-            System.out.println("Please type the car's ID you want to add!");
-
-            int id = validation.isInsideTable("brands");
-
-            double engineCap = validation.getValidatedDouble("Please type the engine capacity in litres: ");
-
-            int horsePower = validation.getValidatedInt("Please type the output of the engine (in horsepower): ");
-
-            String automaticGear = validation.yesOrNo("Please type \"yes/y\" or \"no/n\" for automatic gear: ");
-
-            String fuelType = validation.getValidatedName("Please enter the fuel type: ");
-
-            int odometer = validation.getValidatedInt("Please type existing number of kilometers (odometer): ");
-
-            String plate = validation.getValidatedPlate("Please type the registration number (eg: AB12345):");
-
-            java.sql.Date registrationDate = convertUtilToSql(validation.getValidatedDate("Please type the first registration date (yyyy-MM-dd): "));
-
-            int numberSeats = validation.getValidatedInt("Please type the number of seats: ");
-
-            String cruiseControl = validation.yesOrNo("Please type \"yes/y\" or \" no/n\" for cruise control: ");
-
-            String seatsMaterial = validation.getValidatedName("Please type the seats material: ");
-
-            double priceDay = validation.getValidatedDouble("Please type the price per day of the car: ");
-
-            String answer = validation.yesOrNo("Are you sure you want to add the car into the database? (Type \"Y/YES\" or \"N/NO\")");
-
-            if (answer.equals("no")) {
-                System.out.println("The data has NOT been saved!");
-
-            } else {
-                query = "INSERT INTO cars " +
-                        "VALUES (DEFAULT, " + id +", " + engineCap + ", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
-                        ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
-                        seatsMaterial + "\", " + priceDay + ")";
-
-                System.out.println("The data has been saved!");
-                statement.executeUpdate(query);
+                System.out.printf("|%-5s| %-15s|\n", rs.getString("b.id"), rs.getString("b.name"));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("\nPlease type the ID of the BRAND you want to choose: ");
+        int brandID = validation.isInsideTable("brands");
+
+        //Saving the brand name to display it in the top of the models table
+
+        String brand = "";
+        try {
+            String query = "SELECT name " +
+                    "FROM brands " +
+                    "WHERE brands.id = " + brandID;
+
+            Statement statement = con.createStatement();
+
+            ResultSet rs = statement.executeQuery(query);
+
+            while (rs.next()) {
+                brand = rs.getString("name");
+            }
+
+            System.out.println();
+
+            int width = 25;
+            String s = brand + " Models";
+
+            int padSize = width - s.length();
+            int padStart = s.length() + padSize / 2;
+            s = String.format("%" + padStart + "s", s);
+            s = String.format("%-" + width  + "s", s);
+            System.out.println(s);
+            System.out.println("*************************");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        //display all the models based on the brand id chosen by the user;
+
+        try {
+            System.out.printf("|%-5s| |%-15s|\n", "ID", "MODEL");
+            System.out.println("*************************");
+
+            String query = "SELECT id, name " +
+                    "FROM models m " +
+                    "WHERE m.brand_id = " + brandID;
+
+            Statement statement = con.createStatement();
+
+            ResultSet rs = statement.executeQuery(query);
+
+            while(rs.next()) {
+                System.out.printf("|%-5s| |%-15s|\n", rs.getString("m.id"), rs.getString("m.name"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\nPlease type the ID of the MODEL you want to add: ");
+        int modelID = validation.isInsideTable("models");
+
+        String engineCap = null;
+        if (!brand.equals("Tesla")) {
+            engineCap = Double.toString(validation.getValidatedDouble("Please type the engine capacity in litres: "));
+        }
+
+        int horsePower = validation.getValidatedInt("Please type the output of the engine (in horsepower): ");
+
+        String automaticGear = validation.yesOrNo("Please type \"yes/y\" or \"no/n\" for automatic gear: ");
+
+        String fuelType = validation.getValidatedName("Please enter the fuel type: ");
+
+        int odometer = validation.getValidatedInt("Please type existing number of kilometers (odometer): ");
+
+        String plate = validation.getValidatedPlate("Please type the registration number (eg: AB12345):");
+
+        java.sql.Date registrationDate = convertUtilToSql(validation.getValidatedDate("Please type the first registration date (yyyy-MM-dd): "));
+
+        int numberSeats = validation.getValidatedInt("Please type the number of seats: ");
+
+        String cruiseControl = validation.yesOrNo("Please type \"yes/y\" or \" no/n\" for cruise control: ");
+
+        String seatsMaterial = validation.getValidatedName("Please type the seats material: ");
+
+        double priceDay = validation.getValidatedDouble("Please type the price per day of the car: ");
+
+        //  --VALIDATION AND ADDING IN DB--
+        String answer = validation.yesOrNo("Are you sure you want to add the car into the database? (Type \"Y/YES\" or \"N/NO\")");
+        if (answer.equals("no")) {
+            System.out.println("The data has NOT been saved!");
+        } else {
+            try {
+                String query = "INSERT INTO cars " +
+                        "VALUES (DEFAULT, " + modelID +", \"" + engineCap + "\", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
+                        ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
+                        seatsMaterial + "\", " + priceDay + ")";
+
+                Statement statement = con.createStatement();
+
+                statement.executeUpdate(query);
+
+                System.out.println("The data has been saved!");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public static void searchCar (String columnName) {
@@ -165,9 +232,10 @@ public class CarManagement {
         try {
             Statement statement = con.createStatement();
 
-            String query = "SELECT * " +
-                    "FROM cars c, brands b " +
-                    "WHERE b.id = " + userInput  + " AND c.brand_id = " + userInput;
+          String query = "SELECT * " +
+                    "FROM cars c, brands b, models m " +
+                    "WHERE b.id = " + userInput + " AND m.brand_id = " + userInput + " AND c.model_id = m.id";
+
             ResultSet rs = statement.executeQuery(query);
 
             System.out.println();
@@ -179,7 +247,7 @@ public class CarManagement {
 
             while(rs.next()) {
                 System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n",
-                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("b.model"), rs.getString("c.litre_engine"),
+                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("m.name"), rs.getString("c.litre_engine"),
                         rs.getString("c.hp"), rs.getString("c.fuel_type"), rs.getString("c.odometer"),
                         rs.getString("c.automatic_gear"), rs.getString("c.price_per_day"), rs.getString("c.number_seats"),
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
