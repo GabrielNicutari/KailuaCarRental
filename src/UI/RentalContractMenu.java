@@ -59,7 +59,7 @@ public class RentalContractMenu {
 
 				case "2":
 					MainMenu.printEmptyLines();
-					App.getController().createRentalContract();
+					App.getController().createRentalContract(false, 0);
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;

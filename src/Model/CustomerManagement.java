@@ -20,6 +20,8 @@ public class CustomerManagement {
     public static Connection con;
     public static Validation validation;
 
+
+
     //  Console Input
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     Scanner scanner = new Scanner(System.in);
@@ -79,13 +81,18 @@ public class CustomerManagement {
         }
 
         String zip = validation.getValidatedZip("ZIP Code: ");
+        boolean zipExists = validation.doesZipExist(zip);
 
-        String city = validation.getValidatedName("City: ");
+        String city= null;
+        if (!zipExists) {
+            city = validation.getValidatedName("City: ");
+        }
 
         String phoneNr = validation.getValidatedPhone("Phone Number: ");
 
         String email = validation.getValidatedEmail("Email Address: ");
 
+        //it checks if the customer already exists in order not to create duplicates
         String licenceNr = null;
         try {
             System.out.println("Licence Number: ");
@@ -93,73 +100,40 @@ public class CustomerManagement {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        boolean licenceExists = validation.doesLicenceExist(licenceNr);
+        if (licenceExists) {//this means the customer already exists
 
-        //it checks if the customer already exists in order not to create duplicates
-        try {
-            String query = "SELECT driver_licence_number " +
-                    "FROM customers ";
+            int customerId = 0;
+            try {
+                String query = "SELECT id " +
+                        "FROM customers " +
+                        "WHERE driver_licence_number = \"" + licenceNr + "\"";
 
-            Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery(query);
+                Statement statement = con.createStatement();
 
-            ArrayList<String> licenceNrList = new ArrayList<>();
-            while (rs.next()) {
-                    licenceNrList.add(rs.getString("driver_licence_number"));
-            }
-            System.out.println(licenceNrList);
+                ResultSet rs = statement.executeQuery(query);
 
-            if (licenceNrList.contains(licenceNr)) {
-                System.out.println("You already exist in our database: ");
 
-                try {
-                    query = "SELECT * " +
-                            "FROM customers c " +
-                            "WHERE driver_licence_number = \"" + licenceNr + "\"";
-
-                    rs = statement.executeQuery(query);
-
-                    System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n", "ID",
-                            "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "DRIVER LICENCE NR", "DRIVER SINCE", "EMAIL");
-                    System.out.println("***************************************************************************************************************" +
-                            "**********************************************************");
-                    while (rs.next()) {
-                        System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n",
-                                rs.getString("c.id"), rs.getString("c.first_name"), rs.getString("c.last_name"),
-                                rs.getString("c.mobile_phone"), rs.getString("c.address"), rs.getString("c.zip"),
-                                rs.getString("c.driver_licence_number"), rs.getString("c.driver_since_date"),
-                                rs.getString("c.email"));
-                    }
-                    System.out.println();
-                    App.getController().createRentalContract();//it sends the customer back to rental contract menu
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                while(rs.next()) {
+                    customerId = rs.getInt("id");
                 }
-            } else {
 
-                java.sql.Date driverSince = convertUtilToSql(validation.getValidatedDate("Driver Since Date: "));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-                //  --VALIDATE CUSTOMER--
-                String answer = validation.yesOrNo("\nIs the information correct? Type \"yes/y\" or \"no/n\": ");
-                if (answer.equals("yes")) {
+            driverLicenceAlreadyExists(licenceNr);
 
-                    //get customer id
-                    int customerID = 0;
-                    try {
-                        Statement statement1 = con.createStatement();
-                        String query1 = "SELECT MAX(id) " +
-                                "FROM customers";
+            App.getController().createRentalContract(true, customerId);
+        } else {
 
-                        ResultSet rs1 = statement1.executeQuery(query1);
-                        while(rs1.next()) {
-                            customerID = Integer.parseInt(rs.getString(1)) + 1;
-                        }
+            java.sql.Date driverSince = convertUtilToSql(validation.getValidatedDate("Driver Since Date: "));
 
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+            int customerID = validateCustomer();
 
-                    //save zip and city in zip table
+            if (customerID > 0) {
+                //save zip and city in zip table
+                if (!zipExists) {
                     try {
                         Statement statement2 = con.createStatement();
                         String query2 = "INSERT INTO zip " +
@@ -170,32 +144,81 @@ public class CustomerManagement {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
+                }
 
-                    //Save the customer information in the db
-                    try {
-                        Statement statement3 = con.createStatement();
-                        String query3 = "INSERT INTO customers " +
-                                "VALUES (" + customerID + ", \"" + firstName + "\", \"" + lastName + "\", \"" + address + "\", \"" + zip + "\", \"" + phoneNr
-                                + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\")";
+                //Save the customer information in the db
+                try {
+                    Statement statement3 = con.createStatement();
+                    String query3 = "INSERT INTO customers " +
+                            "VALUES (" + customerID + ", \"" + firstName + "\", \"" + lastName + "\", \"" + address + "\", \"" + zip + "\", \"" + phoneNr
+                            + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\")";
 
-                        statement3.executeUpdate(query3);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-
-                    //Save the zip and city in zip table
-
-                    System.out.println("The customer information has been saved!");
-                } else {
-                    System.out.println("The customer information has NOT been saved!");
+                    statement3.executeUpdate(query3);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
     }
 
+    private void driverLicenceAlreadyExists(String licenceNr) {
 
+        try {
+            String query = "SELECT * " +
+                    "FROM customers c " +
+                    "WHERE driver_licence_number = \"" + licenceNr + "\"";
+            Statement statement = con.createStatement();
+
+            ResultSet rs = statement.executeQuery(query);
+
+            System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n", "ID",
+                    "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "DRIVER LICENCE NR", "DRIVER SINCE", "EMAIL");
+            System.out.println("***************************************************************************************************************" +
+                    "**********************************************************");
+            while (rs.next()) {
+                System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-18s| %-13s| %-25s|\n",
+                        rs.getString("c.id"), rs.getString("c.first_name"), rs.getString("c.last_name"),
+                        rs.getString("c.mobile_phone"), rs.getString("c.address"), rs.getString("c.zip"),
+                        rs.getString("c.driver_licence_number"), rs.getString("c.driver_since_date"),
+                        rs.getString("c.email"));
+            }
+            System.out.println();
+            //it sends the customer back to rental contract menu
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int validateCustomer() {
+        String answer = validation.yesOrNo("\nIs the information correct? Type \"yes/y\" or \"no/n\": ");
+        if (answer.equals("yes")) {
+
+            //get customer id
+            int customerID = 0;
+            try {
+                Statement statement = con.createStatement();
+                String query = "SELECT MAX(id) " +
+                        "FROM customers";
+
+                ResultSet rs = statement.executeQuery(query);
+                while (rs.next()) {
+                    customerID = Integer.parseInt(rs.getString(1));
+                }
+                customerID++;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("The customer information has been saved!");
+            return customerID;
+
+        } else {
+            System.out.println("The customer information has NOT been saved!");
+            return -1;
+        }
+    }
 }
+

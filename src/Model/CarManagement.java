@@ -1,18 +1,9 @@
 package Model;
 
-import UI.CarMenu;
 import UI.MainMenu;
 import UI.Validation;
-import com.mysql.jdbc.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.*;
-import java.util.Scanner;
 
 public class CarManagement {
 
@@ -147,6 +138,8 @@ public class CarManagement {
         String engineCap = null;
         if (!brand.equals("Tesla")) {
             engineCap = Double.toString(validation.getValidatedDouble("Please type the engine capacity in litres: "));
+        } else {
+            engineCap = "electrical";
         }
 
         int horsePower = validation.getValidatedInt("Please type the output of the engine (in horsepower): ");

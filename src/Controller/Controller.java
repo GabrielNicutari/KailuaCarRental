@@ -63,8 +63,8 @@ public class Controller {
 		dbC.displayRentalContracts();
 	}
 
-	public void createRentalContract() {
-		dbC.createRentalContract();
+	public void createRentalContract(boolean alreadyExists, int customerId) {
+		dbC.createRentalContract(alreadyExists, customerId);
 	}
 
 	public void searchRentalContract() {

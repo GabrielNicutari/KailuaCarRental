@@ -1,5 +1,7 @@
 package UI;
 
+import Main.App;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -252,18 +254,21 @@ public class Validation {
     public String getValidatedZip(String message) {
         Pattern pattern = Pattern.compile("[0-9]{4}"); //2300
         System.out.println(message);
-        String answer = null;
+        String zip = null;
         try {
-            answer = br.readLine();
+            zip = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Matcher matcher = pattern.matcher(answer);
+        Matcher matcher = pattern.matcher(zip);
+
         if (matcher.matches()) {
-            return answer;
+            return zip;
+        } else {
+            return getValidatedZip("Wrong ZIP format. Please try again! (eg: 2200)\n ZIP Code: ");
         }
-        return getValidatedZip("Wrong input. Please try again! (eg: 2300)");
     }
+
     public int isInsideTable(String tableName) {
         int input = -1;
 
@@ -285,5 +290,43 @@ public class Validation {
         System.out.println();
         System.out.println("Invalid input. You can only choose between the listed IDs.");
         return isInsideTable(tableName);
+    }
+
+    public boolean doesLicenceExist(String licenceNr) {
+        try {
+            String query = "SELECT driver_licence_number " +
+                    "FROM customers " +
+                    "WHERE driver_licence_number = \"" + licenceNr + "\"";
+
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+
+            if (rs.next()) {
+                System.out.println("The customer already exists!\n");
+                return true;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean doesZipExist(String zip) {
+        Statement statement = null;
+        try {
+            String query = "SELECT zip " +
+                    "FROM zip z " +
+                    "WHERE z.zip = \"" + zip + "\"";
+            statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(query);
+
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+         return false;
     }
 }
