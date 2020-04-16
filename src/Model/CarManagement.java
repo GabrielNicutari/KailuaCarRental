@@ -190,21 +190,24 @@ public class CarManagement {
 
     }
 
-    public static void searchCar (String columnName) {
+    public void searchCar (String columnName) {
 
        if (columnName.equals("brand.name")) {
            displayBrand();
            chooseBrand();
        }
-        if (columnName.equals("cars.hp")) {
+
+       if (columnName.equals("cars.hp")) {
             displayBasedOnHP();
-        }
-        if (columnName.equals("cars.number_seats")) {
+       }
+
+       if (columnName.equals("cars.number_seats")) {
             displayBasedOnNumberOfSeats();
-        }
-        if (columnName.equals("cars.price_per_day")) {
+       }
+
+       if (columnName.equals("cars.price_per_day")) {
             displayBasedOnPrice();
-        }
+       }
     }
 
     public static void displayBasedOnHP() {
@@ -317,6 +320,7 @@ public class CarManagement {
             e.printStackTrace();
         }
     }
+
     public static void displayBasedOnPrice() {
         String message = "What price range are you looking for?\n" +
                 "[1] 0-500 DKK\n" +
@@ -376,8 +380,7 @@ public class CarManagement {
         }
     }
 
-
-    public static void displayBrand() {
+    public void displayBrand() {
         MainMenu.printEmptyLines();
         System.out.printf("| %-10s| %-15s|\n", "BRAND_ID", "NAME");
         System.out.println("******************************");
@@ -397,7 +400,7 @@ public class CarManagement {
         }
     }
 
-    public static void chooseBrand() {
+    public void chooseBrand() {
         int userInput = -1;
         userInput = validation.isInsideTable("brands"); //check if input is found in the table - User Restriction
         try {

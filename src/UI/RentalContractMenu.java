@@ -68,7 +68,7 @@ public class RentalContractMenu {
 
 				case "3":
 					MainMenu.printEmptyLines();
-					//searchRentalContract();
+					searchRentalContract();
 					MainMenu.printEmptyLines();
 					break;
 
@@ -92,6 +92,7 @@ public class RentalContractMenu {
 		String choice = "-1";
 		boolean updated = false;
 		boolean doesContinue = false;
+		boolean found = true;
 
 		do {
 			System.out.println("SEARCH RENTAL CONTRACT MENU");
@@ -99,11 +100,17 @@ public class RentalContractMenu {
 
 			String column = chooseFilter();	//this is the chosen filter
 			if(!column.equals("BACK")) {
-				//App.getController().searchRentalContract(column);
+				if(column.equals("customerInfo")) {
+					System.out.println("Type the <First Name> or <Last Name> or <Phone Number> of the customer " +
+							"assigned to the rental contract.");
+					found = App.getController().searchRentalContract("customerInfo");
+				} else {
+					App.getController().searchRentalContract(column);
+				}
 				doesContinue = true;
 			}
 
-			if(!doesContinue) {
+			if(!doesContinue || !found) {
 				MainMenu.printEmptyLines();
 				break;
 			}
@@ -157,7 +164,7 @@ public class RentalContractMenu {
 
 		switch (choice) {
 			case "1":
-				return "brand.name";
+				return "brand_name";
 
 			case "2":
 				return "customerInfo";
@@ -180,7 +187,7 @@ public class RentalContractMenu {
 
 	public static void updateRentalContractMenu(){
 
-		int toUpdate = validation.getValidatedInt("Type the <ID> of the RentalContract you want to modify");
+		int toUpdate = validation.getValidatedInt("Type the <ID> of the Rental Contract you want to modify");
 
 		String choice = "-1";
 		do {
@@ -196,6 +203,7 @@ public class RentalContractMenu {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
 			switch(choice) {
 				case "1":
 

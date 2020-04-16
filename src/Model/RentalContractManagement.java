@@ -231,9 +231,60 @@ public class RentalContractManagement {
 
 
     }
-    public static void searchByCustomer() {
 
-        boolean ok_object = false, ok_headline = false;
+
+    public boolean search(String columnName) {
+        switch(columnName) {
+            case "customerInfo":
+                return searchByCustomer();
+
+            case "brand_name":
+                carManagement.displayBrand();
+                searchByBrand();
+                break;
+        }
+        return true;
+    }
+
+    public static void searchByBrand() {
+        int userInput = -1;
+        userInput = validation.isInsideTable("brands"); //check if input is found in the table - User Restriction
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM customers cu, cars c, brands b, models m, contracts co, contract_list cl, zip z " +
+                    "WHERE b.id = " + userInput + " AND m.brand_id = " + userInput + " AND c.model_id = m.id AND " +
+                    "co.car_id = c.id AND cl.contract_id = co.id AND cl.customer_id = cu.id AND z.zip = cu.zip";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            System.out.println();
+            System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
+                            "%-11s| %-12s|\n", "CONTRACT ID", "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY",
+                    "DRIVER LICENCE NR", "BRAND", "MODEL","PLATE", "PRICE/DAY", "ODOMETER", "EXTRA KM", "FROM", "TO", "TOTAL PRICE");
+            System.out.println("************************************************************************************************************************************" +
+                    "**************************************************************************************************************************************");
+
+            while(rs.next()) {
+                System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
+                                "%-11s| %-12s|\n", rs.getString("co.id"),rs.getString("cu.first_name"), rs.getString("cu.last_name"),
+                        rs.getString("cu.mobile_phone"), rs.getString("cu.address"), rs.getString("z.zip"),
+                        rs.getString("z.city"), rs.getString("cu.driver_licence_number"), rs.getString("b.name"),
+                        rs.getString("m.name"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
+                        rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
+                        rs.getString("co.to_date"), rs.getString("co.total_price"));
+            }
+
+            System.out.println();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean searchByCustomer() {
+
+        boolean found = false;
         String userInput = null;
         try {
             userInput = br.readLine();
@@ -242,42 +293,47 @@ public class RentalContractManagement {
         }
         try {
             Statement statement = con.createStatement();
+            Statement st = con.createStatement();
 
             String query = "SELECT * " +
-                    "FROM customer c , contracts r , contractlist cl  " +
-                    "WHERE c.first_name = " + userInput +
-                    " OR c.last_name = " + userInput +
-                    " OR c.mobile_phone = " + userInput +
-                    " AND cl.contract_id = r.id " + " AND c.id = cl.customer_id ";
+                    "FROM customers cu , contracts co , contract_list cl, zip z, brands b, models m, cars c " +
+                    "WHERE (cu.first_name = " + "\"" + userInput + "\"" +
+                    "OR cu.last_name = " + "\"" + userInput + "\"" +
+                    "OR cu.mobile_phone = " + "\"" + userInput + "\")" +
+                    "AND (cl.contract_id = co.id AND cu.id = cl.customer_id AND cu.zip = z.zip AND c.model_id = m.id " +
+                    "AND m.brand_id = b.id AND co.car_id = c.id)" +
+                    "ORDER BY co.id";
 
             ResultSet rs = statement.executeQuery(query);
+            ResultSet rs2 = st.executeQuery(query);
 
-            if(rs.next()) {
-                ok_object = true;
-                if(!ok_headline) {
-                    System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
-                                    "%-11s| %-12s|\n", "CONTRACT ID", "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY",
-                            "DRIVER LICENCE NR", "BRAND", "MODEL","PLATE", "PRICE/DAY", "ODOMETER", "EXTRA KM", "FROM", "TO", "TOTAL PRICE");
-                    System.out.println("************************************************************************************************************************************" +
-                            "**************************************************************************************************************************************");
-                    ok_headline = true;
-                }
+            if(rs2.next()) {
+                found = true;
+
+                System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
+                                "%-11s| %-12s|\n", "CONTRACT ID", "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY",
+                        "DRIVER LICENCE NR", "BRAND", "MODEL","PLATE", "PRICE/DAY", "ODOMETER", "EXTRA KM", "FROM", "TO", "TOTAL PRICE");
+                System.out.println("************************************************************************************************************************************" +
+                        "**************************************************************************************************************************************");
+
                 while(rs.next()) {
                     System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
                                     "%-11s| %-12s|\n", rs.getString("co.id"),rs.getString("cu.first_name"), rs.getString("cu.last_name"),
                             rs.getString("cu.mobile_phone"), rs.getString("cu.address"), rs.getString("z.zip"),
                             rs.getString("z.city"), rs.getString("cu.driver_licence_number"), rs.getString("b.name"),
-                            rs.getString("b.model"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
+                            rs.getString("m.name"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
                             rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
                             rs.getString("co.to_date"), rs.getString("co.total_price"));
                 }
+                System.out.println();
             }
-            if(!ok_object) {
-                System.out.print("No costumer with this info was found");
+            if(!found) {
+                System.out.println("No rental contract with this info has been found. ");
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return true;
     }
-
 }

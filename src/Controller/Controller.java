@@ -44,9 +44,8 @@ public class Controller {
 		dbC.displayCustomers();
 	}
 
-
 	public boolean searchCustomer() {
-        return dbc.searchCustomer();
+        return dbC.searchCustomer();
 	}
 
 	public void updateCustomer() {
@@ -54,7 +53,7 @@ public class Controller {
 	}
 
 	public void deleteCustomer() {
-
+		dbC.deleteRow("customers");
 	}
 
 
@@ -67,8 +66,8 @@ public class Controller {
 		dbC.createRentalContract(alreadyExists, customerId);
 	}
 
-	public void searchRentalContract() {
-
+	public boolean searchRentalContract(String columnName) {
+		return dbC.searchRentalContract(columnName);
 	}
 
 	public void updateRentalContract() {

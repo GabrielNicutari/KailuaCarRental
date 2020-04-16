@@ -100,7 +100,6 @@ public class CustomerMenu {
 			System.out.println("Type the <First Name> or <Last Name> or <Phone Number> of the customer.");
 			found = App.getController().searchCustomer();
 
-
 			if(!found) {
 				MainMenu.printEmptyLines();
 				continue;

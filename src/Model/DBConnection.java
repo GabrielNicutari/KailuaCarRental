@@ -66,6 +66,10 @@ public class DBConnection {
 		return customerManagement.search();
 	}
 
+	public boolean searchRentalContract(String columnName) {
+		return rentalContractManagement.search(columnName);
+	}
+
     //		---UPDATE---		\\
     public void updateCar(int toUpdate, String columnName) {
 	    carManagement.update(toUpdate, columnName);

@@ -21,7 +21,6 @@ public class CustomerManagement {
     public static Validation validation;
 
 
-
     //  Console Input
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     Scanner scanner = new Scanner(System.in);
@@ -60,35 +59,38 @@ public class CustomerManagement {
         }
     }
 
-    public static void search() {
+    public static boolean search() {
 
-        boolean ok_object = false, ok_headline = false;
+        boolean found = false;
         String userInput = null;
+
         try {
             userInput = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             Statement statement = con.createStatement();
+            Statement st = con.createStatement();
 
             String query = "SELECT * " +
-                    "FROM customer c " +
-                    "WHERE c.first_name = " + userInput +
-                    " OR c.last_name = " + userInput +
-                    " OR c.mobile_phone = " + userInput;
+                    "FROM customers c , zip z " +
+                    "WHERE (c.zip = z.zip) AND (c.first_name = " + "\"" + userInput + "\"" +
+                    " OR c.last_name = " + "\"" + userInput + "\"" +
+                    " OR c.mobile_phone = " + "\"" + userInput + "\")";
 
             ResultSet rs = statement.executeQuery(query);
+            ResultSet rs2 = st.executeQuery(query);
 
-            if(rs.next()) {
-                ok_object = true;
-                if(!ok_headline) {
-                    System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-25s|\n", "ID",
-                            "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY", "DRIVER LICENCE NR", "DRIVER SINCE", "EMAIL");
-                    System.out.println("*****************************************************************************************************************" +
-                            "*************************************************************************");
-                    ok_headline = true;
-                }
+            if(rs2.next()) {
+                found = true;
+
+                System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-25s|\n", "ID",
+                        "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY", "DRIVER LICENCE NR", "DRIVER SINCE", "EMAIL");
+                System.out.println("*****************************************************************************************************************" +
+                        "*************************************************************************");
+
                 while (rs.next()) {
                     System.out.printf("| %-7s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-25s|\n",
                             rs.getString("c.id"), rs.getString("c.first_name"), rs.getString("c.last_name"),
@@ -97,14 +99,16 @@ public class CustomerManagement {
                             rs.getString("c.email"));
                 }
             }
-            if(!ok_object) {
-                System.out.print("No costumer with this info was found");
+
+            if(!found) {
+                System.out.print("No customer with this information has been found.");
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return true;
     }
-
 
     private static java.sql.Date convertUtilToSql(java.util.Date date) {
         java.sql.Date sqlDate = new java.sql.Date(date.getTime());
