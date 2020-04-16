@@ -45,8 +45,8 @@ public class Controller {
 	}
 
 
-	public void searchCustomer() {
-
+	public boolean searchCustomer() {
+        return dbc.searchCustomer();
 	}
 
 	public void updateCustomer() {

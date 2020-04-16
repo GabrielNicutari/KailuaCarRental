@@ -62,6 +62,9 @@ public class DBConnection {
         carManagement.searchCar(columnName);
     }
 
+    public boolean searchCustomer() {
+		return customerManagement.search();
+	}
 
     //		---UPDATE---		\\
     public void updateCar(int toUpdate, String columnName) {

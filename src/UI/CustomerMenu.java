@@ -90,20 +90,20 @@ public class CustomerMenu {
 		String choice = "-1";
 		boolean updated = false;
 		boolean doesContinue = false;
+		boolean repeat = true;
+		boolean found = true;
 
 		do {
 			System.out.println("SEARCH CUSTOMER MENU");
 			System.out.println("****************************");
 
-			String column = chooseFilter();	//this is the chosen filter
-			if(!column.equals("BACK")) {
-				//App.getController().searchCustomer(column);
-				doesContinue = true;
-			}
+			System.out.println("Type the <First Name> or <Last Name> or <Phone Number> of the customer.");
+			found = App.getController().searchCustomer();
 
-			if(!doesContinue) {
+
+			if(!found) {
 				MainMenu.printEmptyLines();
-				break;
+				continue;
 			}
 
 			displaySearchOptions();
