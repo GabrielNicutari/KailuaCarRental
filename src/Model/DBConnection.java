@@ -52,8 +52,8 @@ public class DBConnection {
 		carManagement.create();
 	}
 
-	public void createRentalContract() {
-		rentalContractManagement.create();
+	public void createRentalContract(boolean alreadyExists, int customerId) {
+		rentalContractManagement.create(alreadyExists, customerId);
 	}
 
 

@@ -21,6 +21,8 @@ public class RentalContractManagement {
     //  Console Input
     //private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+    private static boolean loop = false;
+
     //  Constructor
     public RentalContractManagement(Connection con, Validation validation, CarManagement carManagement, CustomerManagement customerManagement) {
         this.con = con;
@@ -35,10 +37,11 @@ public class RentalContractManagement {
             Statement statement = con.createStatement();
 
             String query =  "SELECT co.id, cu.first_name, cu.last_name, cu.mobile_phone, cu.address, z.zip, z.city, cu.driver_licence_number," +
-                            "b.name, b.model, c.plate, c.price_per_day, c.odometer, " +
+                            "m.name, b.name, c.plate, c.price_per_day, c.odometer, " +
                             "co.extra_km, co.from_date, co.to_date, co.total_price " +
-                    "FROM contracts co, contract_list cl, customers cu, zip z, cars c, brands b " +
-                    "WHERE co.id = cl.contract_id AND cl.customer_id = cu.id AND cu.zip = z.zip AND co.car_id = c.id AND c.brand_id = b.id";
+                    "FROM contracts co, contract_list cl, customers cu, zip z, cars c, models m, brands b " +
+                    "WHERE co.id = cl.contract_id AND cl.customer_id = cu.id AND cu.zip = z.zip AND co.car_id = c.id AND c.model_id = m.id AND " +
+                            "m.brand_id = b.id";
 
             ResultSet rs = statement.executeQuery(query);
 
@@ -52,7 +55,7 @@ public class RentalContractManagement {
                                 "%-11s| %-12s|\n", rs.getString("co.id"),rs.getString("cu.first_name"), rs.getString("cu.last_name"),
                         rs.getString("cu.mobile_phone"), rs.getString("cu.address"), rs.getString("z.zip"),
                         rs.getString("z.city"), rs.getString("cu.driver_licence_number"), rs.getString("b.name"),
-                        rs.getString("b.model"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
+                        rs.getString("m.name"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
                         rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
                         rs.getString("co.to_date"), rs.getString("co.total_price"));
             }
@@ -67,148 +70,162 @@ public class RentalContractManagement {
         return sqlDate;
     }
 
-    public void create() {//create the customer as well and the connection in contract_list table
-        System.out.println("In order to create a new CONTRACT first type: ");
-        String answer = validation.yesOrNo("\"yes/y\" or \"no/n\" if the customer already exists: ");
+    public void create(boolean alreadyExists, int customerId) {//create the customer as well and the connection in contract_list table
+        boolean setLoop = false;
+        int contractId = 0;
+        String answer = "";
+        if (!alreadyExists) {//only when user types no, but the customer already exists
+            System.out.println("In order to create a new CONTRACT first type: ");
+            answer = validation.yesOrNo("\"yes/y\" or \"no/n\" if the customer already exists: ");
 
+            //  --CREATE CUSTOMER--
+            customerId = 0;
+            //loop = false;
 
-        //  --CREATE CUSTOMER--
-        int customerID = 0, contractID = 0;
-        if (answer.equals("yes")) {
-            System.out.println("In this case, please type the customer's ID from the following: ");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            customerManagement.display();// filter
-
-            System.out.println("\nCUSTOMER ID: ");
-            customerID = validation.isInsideTable("customers");
-
-        } else {
-            System.out.println("In this case, please type the following: ");
-            customerManagement.create();
-
-            try {
-                Statement statement = con.createStatement();
-                String query = "SELECT id " +
-                        "FROM customers";
-
-                ResultSet rs = statement.executeQuery(query);
-
-                while (rs.next()) {
-                    customerID = Integer.parseInt(rs.getString("id"));
+            if (answer.equals("yes")) {
+                System.out.println("In this case, please type the customer's ID from the following: ");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+                customerManagement.display();// filter
+
+                System.out.println("\nCUSTOMER ID: ");
+                customerId = validation.isInsideTable("customers");
+
+            } else {
+                System.out.println("In this case, please type the following: ");
+                customerManagement.create();
+
+                try {
+                    Statement statement = con.createStatement();
+                    String query = "SELECT id " +
+                            "FROM customers " +
+                            "ORDER BY id";
+
+                    ResultSet rs = statement.executeQuery(query);
+
+                    while (rs.next()) {
+                        customerId = Integer.parseInt(rs.getString("id"));
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
+        } else {
+            setLoop = true;
         }
 
+        if (!loop) {
 
-        //  --CREATE CONTRACT--
-        System.out.println("\nSelect the desired car's ID: \n");
-        carManagement.display();
+            //  --CREATE CONTRACT--
+            System.out.println("\nSelect the desired car's ID: \n");
+            carManagement.display();
 
-        System.out.println("\nCAR ID: ");
-        int carID = validation.isInsideTable("cars");
+            System.out.println("\nCAR ID: ");
+            int carID = validation.isInsideTable("cars");
 
-        java.util.Date startDate = validation.getValidatedDate("Please type the rental start date (yyyy-MM-dd): ");
-        java.sql.Date fromDate = convertUtilToSql(startDate);
+            java.util.Date startDate = validation.getValidatedDate("Please type the rental start date (yyyy-MM-dd): ");
+            java.sql.Date fromDate = convertUtilToSql(startDate);
 
-        java.util.Date endDate = validation.getValidatedDate("Please type the rental end date (yyyy-MM-dd): ");
-        java.sql.Date toDate = convertUtilToSql(endDate);
+            java.util.Date endDate = validation.getValidatedDate("Please type the rental end date (yyyy-MM-dd): ");
+            java.sql.Date toDate = convertUtilToSql(endDate);
 
-        String reply = validation.yesOrNo("You have 150 km per day. Would you like to add some EXTRA KM for the entire rent period?" +
-                "(Type \"Y/YES\" or \"N/NO\")");
+            String reply = validation.yesOrNo("You have 150 km per day. Would you like to add some EXTRA KM for the entire rent period?" +
+                    "(Type \"Y/YES\" or \"N/NO\")");
 
-        int extraKm = 0;//The customer can add an extra amount of km
-        if (reply.equals("yes")) {
-            System.out.println();
-            extraKm = validation.getValidatedInt("Type the extra km: ");
-        }
-
-        //Calculate total price
-        BigDecimal totalPrice = new BigDecimal(0.0);
-        try {
-            Statement statement = con.createStatement();
-
-            String query = "SELECT price_per_day " +
-                    "FROM cars " +
-                    "WHERE cars.id = " + carID;
-
-            ResultSet rs = statement.executeQuery(query);
-            double priceDay = 0;
-            while(rs.next()) {
-                priceDay = rs.getDouble("price_per_day");
+            int extraKm = 0;//The customer can add an extra amount of km
+            if (reply.equals("yes")) {
+                System.out.println();
+                extraKm = validation.getValidatedInt("Type the extra km: ");
             }
 
-            System.out.println("price/day: " + priceDay);
-            int days = (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-            System.out.println("days:" + days);
-            double val = priceDay * (days + (double) (extraKm) / 150);
-            totalPrice = totalPrice.valueOf(val).setScale(2, BigDecimal.ROUND_HALF_UP);
-            System.out.println("TOTAL PRICE: " + totalPrice);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        //  --VALIDATE CONTRACT--
-        answer = validation.yesOrNo("\nType \"yes/y or \"no/n if you want to create the contract: ");
-
-
-        //  --SAVING DATA--
-        if (answer.equals("yes")) {
-
-            //Insert values in contracts table
-            try {
-                String query = "INSERT INTO contracts " +
-                        "VALUES (DEFAULT, " + carID + ", \"" + fromDate + "\", \"" + toDate + "\", " + extraKm + ", " + totalPrice + ")";
-
-                Statement statement = con.createStatement();
-
-                statement.executeUpdate(query);
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            //it returns the customer ID
+            //Calculate total price
+            BigDecimal totalPrice = new BigDecimal(0.0);
             try {
                 Statement statement = con.createStatement();
-                String query = "SELECT MAX(id) " +
-                        "FROM contracts";
+
+                String query = "SELECT price_per_day " +
+                        "FROM cars " +
+                        "WHERE cars.id = " + carID;
 
                 ResultSet rs = statement.executeQuery(query);
-                while (rs.next()) {
-                    contractID = rs.getInt(1);
+                double priceDay = 0;
+                while(rs.next()) {
+                    priceDay = rs.getDouble("price_per_day");
                 }
 
+                System.out.println("price/day: " + priceDay);
+                int days = (int) (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+                System.out.println("days:" + days);
+                double val = priceDay * (days + (double) (extraKm) / 150);
+                totalPrice = totalPrice.valueOf(val).setScale(2, BigDecimal.ROUND_HALF_UP);
+                System.out.println("TOTAL PRICE: " + totalPrice);
 
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
-            //it stores the customer-contract relation in contract_list table
-            try {
-                Statement statement = con.createStatement();
 
-                String query = "INSERT INTO contract_list " +
-                        "VALUES (DEFAULT, " + customerID + ", " + contractID + ")";
+            //  --VALIDATE CONTRACT AND SAVING IN DB--
+            answer = validation.yesOrNo("\nType \"yes/y or \"no/n if you want to create the contract: ");
+            if (answer.equals("yes")) {
 
-                statement.executeUpdate(query);
+                //Insert values in contracts table
+                try {
+                    String query = "INSERT INTO contracts " +
+                            "VALUES (DEFAULT, " + carID + ", \"" + fromDate + "\", \"" + toDate + "\", " + extraKm + ", " + totalPrice + ", 0)";
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+                    Statement statement = con.createStatement();
+
+                    statement.executeUpdate(query);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                //it returns the contract ID
+                try {
+                    Statement statement = con.createStatement();
+                    String query = "SELECT MAX(id) " +
+                            "FROM contracts";
+
+                    ResultSet rs = statement.executeQuery(query);
+                    while (rs.next()) {
+                        contractId = rs.getInt(1);
+                    }
+
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                //it stores the customer-contract relation in contract_list table
+                try {
+                    Statement statement = con.createStatement();
+
+                    String query = "INSERT INTO contract_list " +
+                            "VALUES (DEFAULT, " + customerId + ", " + contractId + ")";
+
+                    statement.executeUpdate(query);
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("The contract information has been saved!");
+            } else {
+                System.out.println("The contract information has NOT been saved!");
             }
-
-            System.out.println("The contract information has been saved!");
-        } else {
-            System.out.println("The contract information has NOT been saved!");
         }
+
+        if (setLoop) {
+            loop = true;
+        }
+
+
     }
 }
