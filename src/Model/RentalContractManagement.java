@@ -3,6 +3,8 @@ package Model;
 import UI.Validation;
 
 import java.io.BufferedReader;
+import java.io.Console;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -17,6 +19,7 @@ public class RentalContractManagement {
     private static Validation validation;
     private static CarManagement carManagement;
     private static CustomerManagement customerManagement;
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     //  Console Input
     //private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -211,4 +214,53 @@ public class RentalContractManagement {
             System.out.println("The contract information has NOT been saved!");
         }
     }
+    public static void searchByCustomer() {
+
+        boolean ok_object = false, ok_headline = false;
+        String userInput = null;
+        try {
+            userInput = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM customer c , contracts r , contractlist cl  " +
+                    "WHERE c.first_name = " + userInput +
+                    " OR c.last_name = " + userInput +
+                    " OR c.mobile_phone = " + userInput +
+                    " AND cl.contract_id = r.id " + " AND c.id = cl.customer_id ";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            if(rs.next()) {
+                ok_object = true;
+                if(!ok_headline) {
+                    System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
+                                    "%-11s| %-12s|\n", "CONTRACT ID", "FIRST NAME", "LAST NAME", "PHONE NR", "ADDRESS", "ZIP", "CITY",
+                            "DRIVER LICENCE NR", "BRAND", "MODEL","PLATE", "PRICE/DAY", "ODOMETER", "EXTRA KM", "FROM", "TO", "TOTAL PRICE");
+                    System.out.println("************************************************************************************************************************************" +
+                            "**************************************************************************************************************************************");
+                    ok_headline = true;
+                }
+                while(rs.next()) {
+                    System.out.printf("| %-12s| %-20s| %-20s| %-10s| %-30s| %-7s| %-15s| %-18s| %-13s| %-15s| %-8s| %-11s| %-9s| %-9s| %-11s| " +
+                                    "%-11s| %-12s|\n", rs.getString("co.id"),rs.getString("cu.first_name"), rs.getString("cu.last_name"),
+                            rs.getString("cu.mobile_phone"), rs.getString("cu.address"), rs.getString("z.zip"),
+                            rs.getString("z.city"), rs.getString("cu.driver_licence_number"), rs.getString("b.name"),
+                            rs.getString("b.model"), rs.getString("c.plate"), rs.getString("c.price_per_day"),
+                            rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
+                            rs.getString("co.to_date"), rs.getString("co.total_price"));
+                }
+            }
+            if(!ok_object) {
+                System.out.print("No costumer with this info was found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
