@@ -3,7 +3,6 @@ package Model;
 import UI.CarMenu;
 import UI.MainMenu;
 import UI.Validation;
-import com.mysql.jdbc.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -199,12 +198,185 @@ public class CarManagement {
            chooseBrand();
        }
         if (columnName.equals("cars.hp")) {
+            displayBasedOnHP();
         }
         if (columnName.equals("cars.number_seats")) {
+            displayBasedOnNumberOfSeats();
         }
         if (columnName.equals("cars.price_per_day")) {
+            displayBasedOnPrice();
         }
     }
+
+    public static void displayBasedOnHP() {
+        String message = "What horsepower range are you looking for?\n" +
+                "[1] 0-250 Horsepower\n" +
+                "[2] 250-500 Horsepower\n" +
+                "[3] 500-750 Horsepower\n";
+        int userInput = 0;
+        userInput = validation.getValidatedInt(message);
+        int hpButtom = 0;
+        int hpTop = 0;
+        switch (userInput) {
+            case 1:
+                hpButtom = 0;
+                hpTop = 250;
+                break;
+            case 2:
+                hpButtom = 250;
+                hpTop = 500;
+                break;
+            case 3:
+                hpButtom = 500;
+                hpTop = 750;
+                break;
+            default:
+                System.out.println("something went wrong");
+        }
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM cars c, brands b , models m " +
+                    "WHERE c.hp BETWEEN " + hpButtom + " AND " + hpTop + " AND m.id = c.model_id " +
+                    " AND b.id = m.brand_id ";
+            //"ORDER BY c.id";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n", "Car_ID",
+                    "BRAND", "MODEL", "ENGINE CAPACITY", "HP", "FUEL TYPE", "ODOMETER", "AUTOMATIC", "PRICE/DAY", "NR_SEATS",
+                    "SEATS MATERIAL", "CRUISE CTRL", "PLATE", "REG DATE");
+            System.out.println("**************************************************************************************************************" +
+                    "*************************************************************************************************************");
+            while(rs.next()) {
+                System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n",
+                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("m.name"), rs.getString("c.litre_engine"),
+                        rs.getString("c.hp"), rs.getString("c.fuel_type"), rs.getString("c.odometer"),
+                        rs.getString("c.automatic_gear"), rs.getString("c.price_per_day"), rs.getString("c.number_seats"),
+                        rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
+                        rs.getString("c.registration_date"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void displayBasedOnNumberOfSeats() {
+        String message = "How many seats should the car have?\n" +
+                "[1] 2 Seats\n" +
+                "[2] 4 Seats\n" +
+                "[3] 5 Seats\n" +
+                "[4] 7 Seats";
+        int userInput = 0;
+        userInput = validation.getValidatedInt(message);
+        int seatNumber = 0;
+        switch (userInput) {
+            case 1:
+                seatNumber = 2;
+                break;
+            case 2:
+                seatNumber = 4;
+                break;
+            case 3:
+                seatNumber = 5;
+                break;
+            case 4:
+                seatNumber = 7;
+                break;
+            default:
+                System.out.println("something went wrong");
+        }
+
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM cars c, brands b , models m " +
+                    "WHERE c.number_seats = " + seatNumber + " AND m.id = c.model_id " +
+                    " AND b.id = m.brand_id ";
+            //"ORDER BY c.id";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n", "Car_ID",
+                    "BRAND", "MODEL", "ENGINE CAPACITY", "HP", "FUEL TYPE", "ODOMETER", "AUTOMATIC", "PRICE/DAY", "NR_SEATS",
+                    "SEATS MATERIAL", "CRUISE CTRL", "PLATE", "REG DATE");
+            System.out.println("**************************************************************************************************************" +
+                    "*************************************************************************************************************");
+            while(rs.next()) {
+                System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n",
+                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("m.name"), rs.getString("c.litre_engine"),
+                        rs.getString("c.hp"), rs.getString("c.fuel_type"), rs.getString("c.odometer"),
+                        rs.getString("c.automatic_gear"), rs.getString("c.price_per_day"), rs.getString("c.number_seats"),
+                        rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
+                        rs.getString("c.registration_date"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void displayBasedOnPrice() {
+        String message = "What price range are you looking for?\n" +
+                "[1] 0-500 DKK\n" +
+                "[2] 500-1000 DKK\n" +
+                "[3] 1000-1500 DKK\n" +
+                "[4] 1500-2000 DKK";
+        int userInput = 0;
+        userInput = validation.getValidatedInt(message);
+        int priceButtom = 0;
+        int priceTop = 0;
+        switch (userInput) {
+            case 1:
+                priceButtom = 0;
+                priceTop = 500;
+                break;
+            case 2:
+                priceButtom = 500;
+                priceTop = 1000;
+                break;
+            case 3:
+                priceButtom = 1000;
+                priceTop = 1500;
+                break;
+            case 4:
+                priceButtom = 1500;
+                priceTop = 2000;
+                break;
+            default:
+                System.out.println("something went wrong");
+        }
+        try {
+            Statement statement = con.createStatement();
+
+            String query = "SELECT * " +
+                    "FROM cars c, brands b , models m " +
+                    "WHERE c.price_per_day BETWEEN " + priceButtom + " AND " + priceTop + " AND m.id = c.model_id " +
+                    " AND b.id = m.brand_id ";
+
+            ResultSet rs = statement.executeQuery(query);
+
+            System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n", "Car_ID",
+                    "BRAND", "MODEL", "ENGINE CAPACITY", "HP", "FUEL TYPE", "ODOMETER", "AUTOMATIC", "PRICE/DAY", "NR_SEATS",
+                    "SEATS MATERIAL", "CRUISE CTRL", "PLATE", "REG DATE");
+            System.out.println("**************************************************************************************************************" +
+                    "*************************************************************************************************************");
+            while(rs.next()) {
+                System.out.printf("| %-7s| %-15s| %-15s| %-23s| %-10s| %-15s| %-15s| %-15s| %-15s| %-9s| %-15s| %-12s| %-13s| %-11s|\n",
+                        rs.getString("c.id"),rs.getString("b.name"), rs.getString("m.name"), rs.getString("c.litre_engine"),
+                        rs.getString("c.hp"), rs.getString("c.fuel_type"), rs.getString("c.odometer"),
+                        rs.getString("c.automatic_gear"), rs.getString("c.price_per_day"), rs.getString("c.number_seats"),
+                        rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
+                        rs.getString("c.registration_date"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void displayBrand() {
         MainMenu.printEmptyLines();
