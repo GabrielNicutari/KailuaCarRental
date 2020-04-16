@@ -1,9 +1,7 @@
 package Model;
 
-import UI.CarMenu;
 import UI.MainMenu;
 import UI.Validation;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,7 +9,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.*;
-import java.util.Scanner;
 
 public class CarManagement {
 
@@ -146,6 +143,8 @@ public class CarManagement {
         String engineCap = null;
         if (!brand.equals("Tesla")) {
             engineCap = Double.toString(validation.getValidatedDouble("Please type the engine capacity in litres: "));
+        } else {
+            engineCap = "electrical";
         }
 
         int horsePower = validation.getValidatedInt("Please type the output of the engine (in horsepower): ");
@@ -177,7 +176,7 @@ public class CarManagement {
                 String query = "INSERT INTO cars " +
                         "VALUES (DEFAULT, " + modelID +", \"" + engineCap + "\", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
                         ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
-                        seatsMaterial + "\", " + priceDay + ")";
+                        seatsMaterial + "\", " + priceDay + ", 0)";
 
                 Statement statement = con.createStatement();
 

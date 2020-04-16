@@ -52,8 +52,8 @@ public class DBConnection {
 		carManagement.create();
 	}
 
-	public void createRentalContract() {
-		rentalContractManagement.create();
+	public void createRentalContract(boolean alreadyExists, int customerId) {
+		rentalContractManagement.create(alreadyExists, customerId);
 	}
 
 
@@ -62,6 +62,9 @@ public class DBConnection {
         carManagement.searchCar(columnName);
     }
 
+    public boolean searchCustomer() {
+		return customerManagement.search();
+	}
 
     //		---UPDATE---		\\
     public void updateCar(int toUpdate, String columnName) {

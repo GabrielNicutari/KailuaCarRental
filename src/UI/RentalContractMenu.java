@@ -35,7 +35,9 @@ public class RentalContractMenu {
 
 	public static void displaySearchFilters() {			//we'll see
 		System.out.println("Choose a filter:");
-
+		System.out.println("[1] Brands");
+		System.out.println("[2] Customer Info");
+		System.out.println("[3] Back to Rental Contracts Menu");
 	}
 
 	//  UI Methods
@@ -59,7 +61,7 @@ public class RentalContractMenu {
 
 				case "2":
 					MainMenu.printEmptyLines();
-					App.getController().createRentalContract();
+					App.getController().createRentalContract(false, 0);
 					validation.doesStop();
 					MainMenu.printEmptyLines();
 					break;
@@ -158,20 +160,14 @@ public class RentalContractMenu {
 				return "brand.name";
 
 			case "2":
-				return "cars.hp";
+				return "customerInfo";
 
 			case "3":
-				return "cars.number_seats";
-
-			case "4":
-				return "cars.price_per_day";
-
-			case "5":
 				return "BACK";
 
 			default:
 				MainMenu.printEmptyLines();
-				System.out.println("Choice must be a value between \"1\" and \"5\".");
+				System.out.println("Choice must be a value between \"1\" and \"3\".");
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {

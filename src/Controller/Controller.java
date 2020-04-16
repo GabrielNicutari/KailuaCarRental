@@ -45,8 +45,8 @@ public class Controller {
 	}
 
 
-	public void searchCustomer() {
-
+	public boolean searchCustomer() {
+        return dbc.searchCustomer();
 	}
 
 	public void updateCustomer() {
@@ -63,8 +63,8 @@ public class Controller {
 		dbC.displayRentalContracts();
 	}
 
-	public void createRentalContract() {
-		dbC.createRentalContract();
+	public void createRentalContract(boolean alreadyExists, int customerId) {
+		dbC.createRentalContract(alreadyExists, customerId);
 	}
 
 	public void searchRentalContract() {
