@@ -171,7 +171,7 @@ public class CarManagement {
                 String query = "INSERT INTO cars " +
                         "VALUES (DEFAULT, " + modelID +", \"" + engineCap + "\", " + horsePower + ", \"" + automaticGear + "\", \"" + fuelType +"\", " + odometer +
                         ", \"" + plate + "\", \"" + registrationDate + "\", " + numberSeats + ", \"" + cruiseControl + "\", \"" +
-                        seatsMaterial + "\", " + priceDay + ")";
+                        seatsMaterial + "\", " + priceDay + ", 0)";
 
                 Statement statement = con.createStatement();
 

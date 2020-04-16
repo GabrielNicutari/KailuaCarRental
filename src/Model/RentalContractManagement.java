@@ -177,7 +177,7 @@ public class RentalContractManagement {
                 //Insert values in contracts table
                 try {
                     String query = "INSERT INTO contracts " +
-                            "VALUES (DEFAULT, " + carID + ", \"" + fromDate + "\", \"" + toDate + "\", " + extraKm + ", " + totalPrice + ")";
+                            "VALUES (DEFAULT, " + carID + ", \"" + fromDate + "\", \"" + toDate + "\", " + extraKm + ", " + totalPrice + ", 0)";
 
                     Statement statement = con.createStatement();
 

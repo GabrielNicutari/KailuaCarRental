@@ -151,7 +151,7 @@ public class CustomerManagement {
                     Statement statement3 = con.createStatement();
                     String query3 = "INSERT INTO customers " +
                             "VALUES (" + customerID + ", \"" + firstName + "\", \"" + lastName + "\", \"" + address + "\", \"" + zip + "\", \"" + phoneNr
-                            + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\")";
+                            + "\", \"" + email + "\", \"" + licenceNr + "\", \"" + driverSince + "\", 0)";
 
                     statement3.executeUpdate(query3);
                 } catch (SQLException e) {
