@@ -403,7 +403,7 @@ public class RentalContractManagement {
 
     public static void updateQueryForIntField(String columnName, int value, int toUpdate) {
         try {
-            String query = "UPDATE cars SET " + columnName + " = ? WHERE id = ?";
+            String query = "UPDATE contracts SET " + columnName + " = ? WHERE id = ?";
             PreparedStatement preparedStmt = con.prepareStatement(query);
             preparedStmt.setInt(1, value);
             preparedStmt.setInt(2, toUpdate);
@@ -416,7 +416,7 @@ public class RentalContractManagement {
 
     public static void updateQueryForDateField(String columnName, Date date, int toUpdate) {
         try {
-            String query = "UPDATE cars SET " + columnName + " = ? WHERE id = ?";
+            String query = "UPDATE contracts SET " + columnName + " = ? WHERE id = ?";
             PreparedStatement preparedStmt = con.prepareStatement(query);
             preparedStmt.setDate(1, date);
             preparedStmt.setInt(2, toUpdate);
