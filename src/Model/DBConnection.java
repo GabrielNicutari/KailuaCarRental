@@ -59,7 +59,7 @@ public class DBConnection {
 
     //		---SEARCH---		\\
     public void searchCar(String columnName) {
-        carManagement.searchCar(columnName);
+        carManagement.search(columnName);
     }
 
     public boolean searchCustomer() {
@@ -75,11 +75,34 @@ public class DBConnection {
 	    carManagement.update(toUpdate, columnName);
     }
 
+	public void updateCustomer(int toUpdate, String columnName) {
+		customerManagement.update(toUpdate, columnName);
+	}
+
+	public void updateRentalContract(int toUpdate, String columnName) {
+		rentalContractManagement.update(toUpdate, columnName);
+	}
 
     //		---DELETE---		\\
-    public void deleteRow(String tableName) {
-        CarManagement.deleteRow(tableName);
-    }
+	public void deleteRow(String tableName) {
+		int userInput = -1;
+		userInput = validation.isInsideTable(tableName);
+		//userInput = isInsideList(tableName);
+		try {
+			PreparedStatement st = con.prepareStatement("DELETE FROM " + tableName + " WHERE id = " + userInput);
 
+			System.out.println();
+			System.out.println("Are you sure you want to delete the row with ID = " + userInput + " from this table? " +
+					"(Type \"Y/YES\" or \"N/NO\")");
 
+			String answer = validation.getValidatedAnswer("");
+			if(answer.equalsIgnoreCase("YES") || answer.equalsIgnoreCase("Y"))   {
+				st.executeUpdate();
+				System.out.println("The row has been successfully deleted.");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}		//only cars and rental contracts
 }

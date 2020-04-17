@@ -2,12 +2,6 @@ package Model;
 
 import UI.MainMenu;
 import UI.Validation;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.sql.*;
 
 public class CarManagement {
@@ -15,7 +9,6 @@ public class CarManagement {
     //  Instantiate Objects
     private static Connection con;
     private static Validation validation;
-
 
     //  Constructor
     public CarManagement (Connection con, Validation validation) {
@@ -48,6 +41,7 @@ public class CarManagement {
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
                         rs.getString("c.registration_date"));
             }
+            System.out.println();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,7 +95,7 @@ public class CarManagement {
 
             System.out.println();
 
-            int width = 25;
+            int width = 24;
             String s = brand + " Models";
 
             int padSize = width - s.length();
@@ -109,7 +103,7 @@ public class CarManagement {
             s = String.format("%" + padStart + "s", s);
             s = String.format("%-" + width  + "s", s);
             System.out.println(s);
-            System.out.println("*************************");
+            System.out.println("************************");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,8 +113,8 @@ public class CarManagement {
         //display all the models based on the brand id chosen by the user;
 
         try {
-            System.out.printf("|%-5s| |%-15s|\n", "ID", "MODEL");
-            System.out.println("*************************");
+            System.out.printf("|%-5s| %-15s|\n", "ID", "MODEL");
+            System.out.println("************************");
 
             String query = "SELECT id, name " +
                     "FROM models m " +
@@ -131,7 +125,7 @@ public class CarManagement {
             ResultSet rs = statement.executeQuery(query);
 
             while(rs.next()) {
-                System.out.printf("|%-5s| |%-15s|\n", rs.getString("m.id"), rs.getString("m.name"));
+                System.out.printf("|%-5s| %-15s|\n", rs.getString("m.id"), rs.getString("m.name"));
             }
 
         } catch (SQLException e) {
@@ -190,31 +184,33 @@ public class CarManagement {
 
     }
 
-    public void searchCar (String columnName) {
+    public void search(String columnName) {
+        switch(columnName) {
+            case "brand.name":
+                displayBrand();
+                chooseBrand();
+                break;
 
-       if (columnName.equals("brand.name")) {
-           displayBrand();
-           chooseBrand();
-       }
+            case "cars.hp":
+                displayBasedOnHP();
+                break;
 
-       if (columnName.equals("cars.hp")) {
-            displayBasedOnHP();
-       }
+            case "cars.number_seats":
+                displayBasedOnNumberOfSeats();
+                break;
 
-       if (columnName.equals("cars.number_seats")) {
-            displayBasedOnNumberOfSeats();
-       }
-
-       if (columnName.equals("cars.price_per_day")) {
-            displayBasedOnPrice();
-       }
+            case "cars.price_per_day":
+                displayBasedOnPrice();
+                break;
+        }
     }
 
     public static void displayBasedOnHP() {
-        String message = "What horsepower range are you looking for?\n" +
-                "[1] 0-250 Horsepower\n" +
-                "[2] 250-500 Horsepower\n" +
-                "[3] 500-750 Horsepower\n";
+        String message = "What <HorsePower Range> are you looking for?\n" +
+                "[1] 0 - 250 HorsePower\n" +
+                "[2] 250 - 500 HorsePower\n" +
+                "[3] 500 - 750 HorsePower\n";
+
         int userInput = 0;
         userInput = validation.getValidatedInt(message);
         int hpButtom = 0;
@@ -233,15 +229,16 @@ public class CarManagement {
                 hpTop = 750;
                 break;
             default:
-                System.out.println("something went wrong");
+                System.out.println("Something went wrong");
         }
+
         try {
             Statement statement = con.createStatement();
 
             String query = "SELECT * " +
                     "FROM cars c, brands b , models m " +
                     "WHERE c.hp BETWEEN " + hpButtom + " AND " + hpTop + " AND m.id = c.model_id " +
-                    " AND b.id = m.brand_id ";
+                    "AND b.id = m.brand_id ";
             //"ORDER BY c.id";
 
             ResultSet rs = statement.executeQuery(query);
@@ -259,6 +256,7 @@ public class CarManagement {
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
                         rs.getString("c.registration_date"));
             }
+            System.out.println();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -266,7 +264,7 @@ public class CarManagement {
     }
 
     public static void displayBasedOnNumberOfSeats() {
-        String message = "How many seats should the car have?\n" +
+        String message = "How many <Seats> does the car have?\n" +
                 "[1] 2 Seats\n" +
                 "[2] 4 Seats\n" +
                 "[3] 5 Seats\n" +
@@ -278,15 +276,19 @@ public class CarManagement {
             case 1:
                 seatNumber = 2;
                 break;
+
             case 2:
                 seatNumber = 4;
                 break;
+
             case 3:
                 seatNumber = 5;
                 break;
+
             case 4:
                 seatNumber = 7;
                 break;
+
             default:
                 System.out.println("something went wrong");
         }
@@ -315,6 +317,7 @@ public class CarManagement {
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
                         rs.getString("c.registration_date"));
             }
+            System.out.println();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -322,11 +325,12 @@ public class CarManagement {
     }
 
     public static void displayBasedOnPrice() {
-        String message = "What price range are you looking for?\n" +
-                "[1] 0-500 DKK\n" +
-                "[2] 500-1000 DKK\n" +
-                "[3] 1000-1500 DKK\n" +
-                "[4] 1500-2000 DKK";
+        String message = "What <Price Range> are you looking for?\n" +
+                "[1] 0 - 500 DKK\n" +
+                "[2] 500 - 1000 DKK\n" +
+                "[3] 1000 - 1500 DKK\n" +
+                "[4] 1500 - 2000 DKK";
+
         int userInput = 0;
         userInput = validation.getValidatedInt(message);
         int priceButtom = 0;
@@ -336,20 +340,24 @@ public class CarManagement {
                 priceButtom = 0;
                 priceTop = 500;
                 break;
+
             case 2:
                 priceButtom = 500;
                 priceTop = 1000;
                 break;
+
             case 3:
                 priceButtom = 1000;
                 priceTop = 1500;
                 break;
+
             case 4:
                 priceButtom = 1500;
                 priceTop = 2000;
                 break;
+
             default:
-                System.out.println("something went wrong");
+                System.out.println("Something went wrong");
         }
         try {
             Statement statement = con.createStatement();
@@ -374,6 +382,7 @@ public class CarManagement {
                         rs.getString("c.seats_material"), rs.getString("c.cruise_control"), rs.getString("c.plate"),
                         rs.getString("c.registration_date"));
             }
+            System.out.println();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -542,30 +551,6 @@ public class CarManagement {
                 contractStmt.executeUpdate();
             }
         } catch(SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void deleteRow(String tableName) {
-        int userInput = -1;
-        userInput = validation.isInsideTable(tableName);
-        //userInput = isInsideList();   //we actually need another column or another table to properly do this
-        //because we're gonna have problems when we filter by ranges
-
-        try {
-            PreparedStatement st = con.prepareStatement("DELETE FROM " + tableName + " WHERE id = " + userInput);
-
-            System.out.println();
-            System.out.println("Are you sure you want to delete this row? " +
-                    "(Type \"Y/YES\" or \"N/NO\")");
-
-            String answer = validation.getValidatedAnswer("");
-            if(answer.equalsIgnoreCase("YES") || answer.equalsIgnoreCase("Y"))   {
-                st.executeUpdate();
-                System.out.println("The row has been successfully deleted.");
-            }
-
-        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

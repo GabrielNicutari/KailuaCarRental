@@ -40,6 +40,16 @@ public class RentalContractMenu {
 		System.out.println("[3] Back to Rental Contracts Menu");
 	}
 
+	public static void displayUpdateOptions() {
+		System.out.println("Choose what to modify: ");
+		System.out.println("[1] Car ");
+		System.out.println("[2] Extra Km on rent");
+		System.out.println("[3] Rental Date");
+		System.out.println("[4] Return Date");
+		System.out.println("[5] Everything");
+		System.out.println("[6] Go back");
+	}
+
 	//  UI Methods
 	public static void display() {
 		String choice = "-1";
@@ -187,51 +197,63 @@ public class RentalContractMenu {
 
 	public static void updateRentalContractMenu(){
 
-		int toUpdate = validation.getValidatedInt("Type the <ID> of the Rental Contract you want to modify");
-
+		boolean updated = false;
 		String choice = "-1";
+		int toUpdate = validation.isInsideTable("contracts");
 		do {
 			System.out.println();
-			System.out.println("Choose what to modify: ");		//holy shit, a lot of things
-			System.out.println("[1] Employee ID ");
-			System.out.println("[2] Shift IDs");
-			System.out.println("[3] Everything");
-			System.out.println("[4] Go back");
+			displayUpdateOptions();
 
 			try {
 				choice = br.readLine();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 			switch(choice) {
 				case "1":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateRentalContract(toUpdate,"employeeId");
+					App.getController().updateRentalContract(toUpdate, "car_id");
+					updated = true;
 					MainMenu.printEmptyLines();
 					break;
 
 				case "2":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateRentalContract(toUpdate,"shiftIds");
+					App.getController().updateRentalContract(toUpdate, "extra_km");
+					updated = true;
 					MainMenu.printEmptyLines();
 					break;
 
 				case "3":
 
 					MainMenu.printEmptyLines();
-					//App.getController().updateRentalContract(toUpdate,"everything");
+					App.getController().updateRentalContract(toUpdate, "from_date");
+					updated = true;
 					MainMenu.printEmptyLines();
 					break;
 
 				case "4":
+					MainMenu.printEmptyLines();
+					App.getController().updateRentalContract(toUpdate, "to_date");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "5":
+					MainMenu.printEmptyLines();
+					App.getController().updateRentalContract(toUpdate, "everything");
+					updated = true;
+					MainMenu.printEmptyLines();
+					break;
+
+				case "6":
 					break;
 
 				default:
 					MainMenu.printEmptyLines();
-					System.out.println("Choice must be a value between \"1\" and \"4\".");
+					System.out.println("Choice must be a value between \"1\" and \"6\".");
 					MainMenu.printEmptyLines();
 					try {
 						Thread.sleep(1000);
@@ -239,6 +261,6 @@ public class RentalContractMenu {
 						e.printStackTrace();
 					}
 			}
-		}  while(!choice.equals("4"));
+		}  while(!choice.equals("6") && !updated);
 	}
 }

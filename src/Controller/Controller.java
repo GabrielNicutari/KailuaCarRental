@@ -38,7 +38,6 @@ public class Controller {
 	}
 
 
-
 	//		---CUSTOMERS---		\\
 	public void displayCustomers() {
 		dbC.displayCustomers();
@@ -48,12 +47,8 @@ public class Controller {
         return dbC.searchCustomer();
 	}
 
-	public void updateCustomer() {
-
-	}
-
-	public void deleteCustomer() {
-		dbC.deleteRow("customers");
+	public void updateCustomer(int toUpdate, String columnName) {
+		dbC.updateCustomer(toUpdate,columnName);
 	}
 
 
@@ -70,11 +65,11 @@ public class Controller {
 		return dbC.searchRentalContract(columnName);
 	}
 
-	public void updateRentalContract() {
-
+	public void updateRentalContract(int toUpdate, String columnName) {
+		dbC.updateRentalContract(toUpdate,columnName);
 	}
 
 	public void deleteRentalContract() {
-
+		dbC.deleteRow("contracts");
 	}
 }

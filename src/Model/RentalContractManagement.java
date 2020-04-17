@@ -7,10 +7,7 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class RentalContractManagement {
 
@@ -20,9 +17,6 @@ public class RentalContractManagement {
     private static CarManagement carManagement;
     private static CustomerManagement customerManagement;
     private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-    //  Console Input
-    //private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     private static boolean loop = false;
 
@@ -62,6 +56,7 @@ public class RentalContractManagement {
                         rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
                         rs.getString("co.to_date"), rs.getString("co.total_price"));
             }
+            System.out.println();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -232,7 +227,6 @@ public class RentalContractManagement {
 
     }
 
-
     public boolean search(String columnName) {
         switch(columnName) {
             case "customerInfo":
@@ -275,8 +269,8 @@ public class RentalContractManagement {
                         rs.getString("c.odometer"), rs.getString("co.extra_km"), rs.getString("co.from_date"),
                         rs.getString("co.to_date"), rs.getString("co.total_price"));
             }
-
             System.out.println();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -335,5 +329,150 @@ public class RentalContractManagement {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public void update(int toUpdate, String columnName) {
+        int value;
+        java.util.Date date;
+        switch(columnName) {
+            case "car_id":
+                carManagement.display();
+                System.out.println();
+                System.out.println("Type the new <Car ID>");
+                value = validation.isInsideTable("cars");
+                updateQueryForIntField(columnName, value, toUpdate);
+                updatePriceEverywhere(toUpdate);
+                break;
+
+            case "extra_km":
+                value = validation.getValidatedInt("Please type the new amount of <Extra Km> purchased");
+                updateQueryForIntField(columnName, value, toUpdate);
+                updatePriceEverywhere(toUpdate);
+                break;
+
+            case "from_date":
+                date = validation.getValidatedDate("Please type the new <Rental Date>:");
+                java.sql.Date from_date = convertUtilToSql(date);
+                updateQueryForDateField(columnName, from_date, toUpdate);
+                updatePriceEverywhere(toUpdate);
+                break;
+
+            case "to_date":
+                date = validation.getValidatedDate("Please type the new <Return Date>:");
+                java.sql.Date to_date = convertUtilToSql(date);
+                updateQueryForDateField(columnName, to_date, toUpdate);
+                updatePriceEverywhere(toUpdate);
+                break;
+
+            case "everything":
+                carManagement.display();
+                System.out.println();
+
+                System.out.println("Type the new <Car ID>");
+                int id = validation.isInsideTable("cars");
+                int extra_km = validation.getValidatedInt("Please type the new amount of <Extra Km> purchased");
+
+                date = validation.getValidatedDate("Please type the new <Rental Date>:");
+                from_date = convertUtilToSql(date);
+
+                date = validation.getValidatedDate("Please type the new <Return Date>:");
+                to_date = convertUtilToSql(date);
+
+                try {
+                    String query = "UPDATE contracts SET car_id = ?, extra_km = ?, from_date = ?, " +
+                            "to_date = ? WHERE id = ?";
+                    PreparedStatement preparedStmt = con.prepareStatement(query);
+                    preparedStmt.setInt(1, id);
+                    preparedStmt.setInt(2, extra_km);
+                    preparedStmt.setDate(3, from_date);
+                    preparedStmt.setDate(4, to_date);
+                    updatePriceEverywhere(toUpdate);
+                    preparedStmt.setInt(5, toUpdate);
+
+                    preparedStmt.executeUpdate();
+                } catch(SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            default:
+                System.out.println("Wrong field");  //never happens tho, just for debugging purposes
+        }
+        System.out.println("The row has been successfully updated.");
+    }
+
+    public static void updateQueryForIntField(String columnName, int value, int toUpdate) {
+        try {
+            String query = "UPDATE cars SET " + columnName + " = ? WHERE id = ?";
+            PreparedStatement preparedStmt = con.prepareStatement(query);
+            preparedStmt.setInt(1, value);
+            preparedStmt.setInt(2, toUpdate);
+
+            preparedStmt.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateQueryForDateField(String columnName, Date date, int toUpdate) {
+        try {
+            String query = "UPDATE cars SET " + columnName + " = ? WHERE id = ?";
+            PreparedStatement preparedStmt = con.prepareStatement(query);
+            preparedStmt.setDate(1, date);
+            preparedStmt.setInt(2, toUpdate);
+
+            preparedStmt.executeUpdate();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void updatePriceEverywhere(int toUpdate) {
+        try {
+            //Get needed values from contracts in order to update the total_price..
+            //..based on the new price_per_day of the car
+            String selectContract = "SELECT from_date, to_date, extra_km, id " +
+                    "FROM contracts WHERE id = " + toUpdate;
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(selectContract);
+
+            //Get price_per_day value from the cars table, in order to update total_price in contracts
+            String selectCar = "SELECT * FROM cars c, contracts co WHERE c.id = co.car_id AND co.car_id = " + toUpdate;
+            Statement carSt = con.createStatement();
+            ResultSet rsCar = carSt.executeQuery(selectCar);
+
+            double price = 0;
+            while(rsCar.next()) {
+                price = rsCar.getDouble("c.price_per_day");
+            }
+
+            //Update every contract based on car id, also taking into account its own id
+            //eg. we can have 2 contracts for the same car, but one has extra_km and one doesn't..
+            //..so the total price differs from one to another
+            Date from_date = null;
+            Date to_date = null;
+            int extra_km = 0, days, id;
+            double total_price;
+
+            while(rs.next()) {
+                String updateContract = "UPDATE contracts SET total_price = ? WHERE car_id = ? AND id = ?";
+                PreparedStatement contractStmt = con.prepareStatement(updateContract);
+
+                from_date = rs.getDate(1);
+                to_date = rs.getDate(2);
+                extra_km = rs.getInt(3);
+                id = rs.getInt(4);
+
+                days = (int) (to_date.getTime() - from_date.getTime()) / (1000 * 60 * 60 * 24);
+                total_price = price * (days + ((double) extra_km / 150));
+
+                contractStmt.setDouble(1, total_price);
+                contractStmt.setInt(2, toUpdate);
+                contractStmt.setInt(3, id);
+                contractStmt.executeUpdate();
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

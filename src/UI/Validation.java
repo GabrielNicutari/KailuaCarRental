@@ -302,10 +302,9 @@ public class Validation {
             ResultSet rs = statement.executeQuery(query);
 
             if (rs.next()) {
-                System.out.println("The customer already exists!\n");
+                System.out.println("This <Driver Licence> already exists!\n");
                 return true;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
